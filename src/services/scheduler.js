@@ -57,11 +57,10 @@ function startAutoBackup() {
       if (botInstance) {
         const config = require('../config');
         for (const ownerId of config.bot.ownerIds) {
-          await broadcastService.sendToUser(
-            botInstance,
-            ownerId,
-            `💾 <b>Auto Backup Berhasil</b>\n\n📁 File: <code>${result.filename}</code>\n📦 Size: ${result.size}\n📅 Waktu: ${formatDate(new Date())}`,
-          );
+          await botInstance.telegram.sendDocument(ownerId, { source: result.filepath }, {
+            caption: `💾 <b>Auto Backup Berhasil</b>\n\n📁 File: <code>${result.filename}</code>\n📦 Size: ${result.size}\n📅 Waktu: ${formatDate(new Date())}`,
+            parse_mode: 'HTML'
+          });
         }
       }
     } catch (error) {
