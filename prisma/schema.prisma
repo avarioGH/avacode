@@ -1,0 +1,303 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================================
+// ENUMS
+// ============================================================
+
+enum AdminRole {
+  ADMIN
+  OWNER
+}
+
+enum TransactionStatus {
+  PENDING
+  PAID
+  DELIVERED
+  CANCELLED
+  EXPIRED
+  REFUNDED
+}
+
+enum PaymentMethod {
+  BALANCE
+  PAYDISINI
+  PAKASIR
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  EXPIRED
+  CANCELLED
+  FAILED
+}
+
+enum VoucherType {
+  PERCENTAGE
+  FIXED
+}
+
+// ============================================================
+// MODELS
+// ============================================================
+
+model User {
+  id           String   @id @default(cuid())
+  telegramId   BigInt   @unique @map("telegram_id")
+  username     String?
+  firstName    String   @map("first_name")
+  lastName     String?  @map("last_name")
+  balance      Decimal  @default(0) @db.Decimal(15, 2)
+  totalSpent   Decimal  @default(0) @map("total_spent") @db.Decimal(15, 2)
+  totalOrders  Int      @default(0) @map("total_orders")
+  referralCode String   @unique @map("referral_code")
+  referredBy   String?  @map("referred_by")
+  isBlocked    Boolean  @default(false) @map("is_blocked")
+  joinedAt     DateTime @default(now()) @map("joined_at")
+  lastActiveAt DateTime @default(now()) @map("last_active_at")
+
+  transactions   Transaction[]
+  payments       Payment[]
+  referralsGiven Referral[]    @relation("ReferralOwner")
+  referralUsed   Referral[]    @relation("ReferredUser")
+  activityLogs   ActivityLog[]
+  deposits       Deposit[]
+
+  @@map("users")
+}
+
+model Admin {
+  id         String    @id @default(cuid())
+  telegramId BigInt    @unique @map("telegram_id")
+  username   String?
+  firstName  String    @map("first_name")
+  role       AdminRole @default(ADMIN)
+  addedBy    BigInt    @map("added_by")
+  addedAt    DateTime  @default(now()) @map("added_at")
+  isActive   Boolean   @default(true) @map("is_active")
+
+  @@map("admins")
+}
+
+model Category {
+  id          String    @id @default(cuid())
+  name        String
+  description String?
+  emoji       String?
+  sortOrder   Int       @default(0) @map("sort_order")
+  isActive    Boolean   @default(true) @map("is_active")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  products Product[]
+
+  @@map("categories")
+}
+
+model Product {
+  id          String   @id @default(cuid())
+  categoryId  String   @map("category_id")
+  name        String
+  description String?
+  price       Decimal  @db.Decimal(15, 2)
+  isActive    Boolean  @default(true) @map("is_active")
+  sortOrder   Int      @default(0) @map("sort_order")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  category     Category       @relation(fields: [categoryId], references: [id])
+  stocks       ProductStock[]
+  transactions Transaction[]
+
+  @@map("products")
+}
+
+model ProductStock {
+  id            String    @id @default(cuid())
+  productId     String    @map("product_id")
+  content       String
+  isUsed        Boolean   @default(false) @map("is_used")
+  usedAt        DateTime? @map("used_at")
+  transactionId String?   @map("transaction_id")
+  createdAt     DateTime  @default(now()) @map("created_at")
+
+  product     Product      @relation(fields: [productId], references: [id])
+  transaction Transaction? @relation(fields: [transactionId], references: [id])
+
+  @@map("product_stocks")
+}
+
+model Transaction {
+  id            String            @id @default(cuid())
+  userId        String            @map("user_id")
+  productId     String            @map("product_id")
+  quantity      Int               @default(1)
+  unitPrice     Decimal           @map("unit_price") @db.Decimal(15, 2)
+  subtotal      Decimal           @db.Decimal(15, 2)
+  discount      Decimal           @default(0) @db.Decimal(15, 2)
+  finalAmount   Decimal           @map("final_amount") @db.Decimal(15, 2)
+  paymentMethod PaymentMethod     @map("payment_method")
+  status        TransactionStatus @default(PENDING)
+  voucherId     String?           @map("voucher_id")
+  notes         String?
+  deliveredAt   DateTime?         @map("delivered_at")
+  expiredAt     DateTime?         @map("expired_at")
+  createdAt     DateTime          @default(now()) @map("created_at")
+  updatedAt     DateTime          @updatedAt @map("updated_at")
+
+  user    User          @relation(fields: [userId], references: [id])
+  product Product       @relation(fields: [productId], references: [id])
+  voucher Voucher?      @relation(fields: [voucherId], references: [id])
+  stocks  ProductStock[]
+  payment Payment?
+
+  @@map("transactions")
+}
+
+model Payment {
+  id            String        @id @default(cuid())
+  transactionId String        @unique @map("transaction_id")
+  userId        String        @map("user_id")
+  gateway       String
+  gatewayTrxId  String?       @map("gateway_trx_id")
+  channel       String?
+  amount        Decimal       @db.Decimal(15, 2)
+  status        PaymentStatus @default(PENDING)
+  paymentUrl    String?       @map("payment_url")
+  qrCode        String?       @map("qr_code")
+  expiredAt     DateTime?     @map("expired_at")
+  paidAt        DateTime?     @map("paid_at")
+  rawResponse   Json?         @map("raw_response")
+  createdAt     DateTime      @default(now()) @map("created_at")
+  updatedAt     DateTime      @updatedAt @map("updated_at")
+
+  transaction Transaction @relation(fields: [transactionId], references: [id])
+  user        User        @relation(fields: [userId], references: [id])
+
+  @@map("payments")
+}
+
+model Deposit {
+  id           String        @id @default(cuid())
+  userId       String        @map("user_id")
+  amount       Decimal       @db.Decimal(15, 2)
+  gateway      String
+  gatewayTrxId String?       @map("gateway_trx_id")
+  channel      String?
+  status       PaymentStatus @default(PENDING)
+  paymentUrl   String?       @map("payment_url")
+  qrCode       String?       @map("qr_code")
+  expiredAt    DateTime?     @map("expired_at")
+  paidAt       DateTime?     @map("paid_at")
+  rawResponse  Json?         @map("raw_response")
+  createdAt    DateTime      @default(now()) @map("created_at")
+  updatedAt    DateTime      @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("deposits")
+}
+
+model Setting {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     String
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("settings")
+}
+
+model Channel {
+  id          String   @id @default(cuid())
+  channelId   String   @unique @map("channel_id")
+  channelName String   @map("channel_name")
+  inviteLink  String   @map("invite_link")
+  isActive    Boolean  @default(true) @map("is_active")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@map("channels")
+}
+
+model Testimonial {
+  id         String    @id @default(cuid())
+  content    String
+  fromUser   String    @map("from_user")
+  fromUserId BigInt?   @map("from_user_id")
+  isApproved Boolean   @default(false) @map("is_approved")
+  isPosted   Boolean   @default(false) @map("is_posted")
+  postedAt   DateTime? @map("posted_at")
+  createdAt  DateTime  @default(now()) @map("created_at")
+
+  @@map("testimonials")
+}
+
+model Referral {
+  id         String   @id @default(cuid())
+  ownerId    String   @map("owner_id")
+  referredId String   @map("referred_id")
+  bonus      Decimal  @default(0) @db.Decimal(15, 2)
+  isPaid     Boolean  @default(false) @map("is_paid")
+  paidAt     DateTime? @map("paid_at")
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  owner    User @relation("ReferralOwner", fields: [ownerId], references: [id])
+  referred User @relation("ReferredUser", fields: [referredId], references: [id])
+
+  @@unique([ownerId, referredId])
+  @@map("referrals")
+}
+
+model Voucher {
+  id          String      @id @default(cuid())
+  code        String      @unique
+  type        VoucherType
+  value       Decimal     @db.Decimal(15, 2)
+  minPurchase Decimal     @default(0) @map("min_purchase") @db.Decimal(15, 2)
+  maxDiscount Decimal?    @map("max_discount") @db.Decimal(15, 2)
+  maxUses     Int?        @map("max_uses")
+  usedCount   Int         @default(0) @map("used_count")
+  isActive    Boolean     @default(true) @map("is_active")
+  expiredAt   DateTime?   @map("expired_at")
+  createdAt   DateTime    @default(now()) @map("created_at")
+
+  transactions Transaction[]
+
+  @@map("vouchers")
+}
+
+model ActivityLog {
+  id          String   @id @default(cuid())
+  userId      String?  @map("user_id")
+  telegramId  BigInt?  @map("telegram_id")
+  action      String
+  description String
+  metadata    Json?
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  user User? @relation(fields: [userId], references: [id])
+
+  @@map("activity_logs")
+}
+
+model Broadcast {
+  id          String    @id @default(cuid())
+  message     String
+  imageUrl    String?   @map("image_url")
+  totalSent   Int       @default(0) @map("total_sent")
+  totalFailed Int       @default(0) @map("total_failed")
+  sentBy      BigInt    @map("sent_by")
+  sentAt      DateTime? @map("sent_at")
+  createdAt   DateTime  @default(now()) @map("created_at")
+
+  @@map("broadcasts")
+}

@@ -1,0 +1,12 @@
+node_modules/
+.env
+logs/
+backups/
+data/
+*.sql
+dist/
+coverage/
+.nyc_output/
+*.local
+.DS_Store
+Thumbs.db

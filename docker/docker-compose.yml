@@ -1,0 +1,56 @@
+version: '3.8'
+
+services:
+  bot:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    container_name: ava_order_bot
+    restart: unless-stopped
+    env_file:
+      - ../.env
+    environment:
+      - DATABASE_URL=postgresql://postgres:${POSTGRES_PASSWORD:-botpassword}@postgres:5432/ava_order_bot?schema=public
+      - NODE_ENV=production
+    ports:
+      - "${PORT:-3000}:${PORT:-3000}"
+    volumes:
+      - bot_logs:/app/logs
+      - bot_data:/app/data
+      - bot_backups:/app/backups
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - bot_network
+
+  postgres:
+    image: postgres:15-alpine
+    container_name: ava_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ava_order_bot
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-botpassword}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - bot_network
+    # Jangan expose port ke publik di production
+    # ports:
+    #   - "5432:5432"
+
+volumes:
+  postgres_data:
+  bot_logs:
+  bot_data:
+  bot_backups:
+
+networks:
+  bot_network:
+    driver: bridge
