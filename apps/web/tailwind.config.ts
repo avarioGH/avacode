@@ -9,8 +9,10 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        background: 'var(--background)',
-        foreground: 'var(--foreground)',
+        background: '#050816',
+        surface: '#0B1220',
+        foreground: '#FFFFFF',
+        'foreground-muted': '#A1A1AA',
         primary: {
           DEFAULT: '#1677FF',
           foreground: '#FFFFFF',
@@ -19,37 +21,36 @@ const config: Config = {
           DEFAULT: '#A855F7',
           foreground: '#FFFFFF',
         },
-        secondary: {
-          DEFAULT: '#08111F',
-          muted: '#111827',
-          light: '#E5E7EB',
-        },
         accent: {
-          blue: '#22D3EE',
-          green: '#10B981',
+          DEFAULT: '#22D3EE',
+          foreground: '#000000',
         },
-        card: 'var(--card)',
-        border: 'var(--border)',
-        muted: 'var(--muted)',
-        'muted-foreground': 'var(--muted-foreground)',
+        success: {
+          DEFAULT: '#10B981',
+          foreground: '#FFFFFF',
+        },
+        card: '#0B1220',
+        border: 'rgba(255, 255, 255, 0.1)',
       },
       fontFamily: {
         sans: ['var(--font-inter)', 'sans-serif'],
         display: ['var(--font-space-grotesk)', 'sans-serif'],
       },
       boxShadow: {
-        glow: '0 0 40px rgba(22, 119, 255, 0.4)',
-        'glow-purple': '0 0 40px rgba(168, 85, 247, 0.4)',
+        glow: '0 0 20px rgba(22, 119, 255, 0.4)',
+        'glow-purple': '0 0 20px rgba(168, 85, 247, 0.4)',
+        'glow-strong': '0 0 40px rgba(22, 119, 255, 0.6)',
         glass: '0 8px 32px 0 rgba(0, 0, 0, 0.37)',
       },
       backgroundImage: {
-        mesh: 'radial-gradient(circle at 15% 50%, rgba(22, 119, 255, 0.15), transparent 40%), radial-gradient(circle at 85% 30%, rgba(168, 85, 247, 0.15), transparent 40%)',
         'glass-gradient': 'linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.01) 100%)',
+        'primary-gradient': 'linear-gradient(135deg, #1677FF 0%, #A855F7 100%)',
       },
       animation: {
         'fade-in': 'fadeIn 0.5s ease-out',
         'slide-up': 'slideUp 0.5s ease-out',
         'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+        'float': 'float 6s ease-in-out infinite',
       },
       keyframes: {
         fadeIn: {
@@ -60,6 +61,10 @@ const config: Config = {
           '0%': { transform: 'translateY(20px)', opacity: '0' },
           '100%': { transform: 'translateY(0)', opacity: '1' },
         },
+        float: {
+          '0%, 100%': { transform: 'translateY(0)' },
+          '50%': { transform: 'translateY(-10px)' },
+        }
       }
     },
   },

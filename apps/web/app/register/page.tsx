@@ -9,30 +9,30 @@ export default function RegisterPage() {
     <main className="mx-auto flex min-h-screen max-w-6xl items-center px-6 py-10 md:px-10">
       <div className="grid w-full gap-8 lg:grid-cols-[1fr_0.9fr]">
         <div className="space-y-5">
-          <p className="text-xs uppercase tracking-[0.28em] text-ink/48">Create Account</p>
-          <h1 className="font-serif text-6xl leading-none text-ink">Bangun workspace pertama Anda.</h1>
-          <p className="max-w-xl text-base leading-8 text-ink/68">
-            Registrasi akan membuat tenant default agar customer bisa langsung checkout, setup layanan, dan deploy dari dashboard.
+          <p className="text-xs uppercase tracking-[0.28em] text-foreground-muted">Pendaftaran</p>
+          <h1 className="font-display font-bold text-5xl md:text-6xl leading-tight text-white">Mulai Bangun<br/>Masa Depan Anda.</h1>
+          <p className="max-w-xl text-base leading-8 text-foreground-muted">
+            Daftarkan diri Anda sekarang untuk mendapatkan akses instan ke seluruh infrastruktur dan layanan AVACODE. Mulai dari VPS, otomatisasi, hingga integrasi AI.
           </p>
         </div>
         <Card className="p-8">
-          <form className="space-y-5">
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-ink">Nama Lengkap</label>
-              <Input placeholder="Nama owner atau brand" />
+          <form className="space-y-6">
+            <div className="space-y-3">
+              <label className="text-sm font-medium text-white">Nama Lengkap</label>
+              <Input placeholder="Nama Anda atau Perusahaan" />
             </div>
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-ink">Email</label>
-              <Input type="email" placeholder="owner@brand.com" />
+            <div className="space-y-3">
+              <label className="text-sm font-medium text-white">Email</label>
+              <Input type="email" placeholder="email@perusahaan.com" />
             </div>
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-ink">Password</label>
+            <div className="space-y-3">
+              <label className="text-sm font-medium text-white">Password</label>
               <Input type="password" placeholder="Minimal 8 karakter" />
             </div>
-            <Button className="w-full">Buat Akun</Button>
+            <Button className="w-full h-14 bg-primary-gradient border-0 text-white font-bold text-lg rounded-full shadow-glow">Buat Akun</Button>
           </form>
-          <p className="mt-6 text-sm text-ink/62">
-            Sudah punya akun? <Link href="/login" className="font-semibold text-accentStrong">Masuk</Link>
+          <p className="mt-8 text-sm text-foreground-muted text-center">
+            Sudah punya akun? <Link href="/login" className="font-bold text-primary hover:text-purple transition-colors">Masuk di sini</Link>
           </p>
         </Card>
       </div>
