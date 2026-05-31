@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { ArrowRight, CirclePlay } from 'lucide-react';
+import { ArrowRight, CirclePlay, CheckCircle2, Zap, LayoutGrid } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -25,92 +25,130 @@ export default async function ServiceDetailPage({
   }
 
   return (
-    <main className="mx-auto max-w-6xl px-6 py-10 md:px-10">
-      <div
-        className="rounded-[42px] border border-border bg-cover bg-center p-8 text-white md:p-12"
-        style={{ backgroundImage: `linear-gradient(rgba(9, 40, 47, 0.45), rgba(9, 40, 47, 0.58)), url(${product.thumbnailUrl})` }}
-      >
-        <p className="text-xs uppercase tracking-[0.28em] text-white/70">Product Detail</p>
-        <h1 className="mt-4 max-w-4xl font-serif text-5xl leading-none md:text-6xl">{product.name}</h1>
-        <p className="mt-5 max-w-2xl text-base leading-8 text-white/78">{product.description}</p>
-        <div className="mt-8 flex flex-wrap gap-4">
-          <Link href="/register">
-            <Button>Mulai Sekarang</Button>
-          </Link>
-          <a href={product.demoUrl}>
-            <Button variant="secondary">
-              <CirclePlay className="mr-2 h-4 w-4" />
-              Lihat Demo
-            </Button>
-          </a>
+    <main className="mx-auto max-w-7xl px-6 py-24 md:px-10 min-h-screen relative selection:bg-primary selection:text-white">
+      {/* Background Effect */}
+      <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-mesh opacity-40 pointer-events-none" />
+
+      {/* Hero Header */}
+      <div className="relative rounded-[40px] overflow-hidden border border-white/10 shadow-glow group mb-12">
+        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/80 to-transparent z-10" />
+        <div
+          className="absolute inset-0 bg-cover bg-center opacity-60 transition-transform duration-700 group-hover:scale-105"
+          style={{ backgroundImage: `url(${product.thumbnailUrl})` }}
+        />
+        <div className="relative z-20 p-8 md:p-14 md:pt-32">
+          <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary mb-4 flex items-center gap-2">
+            <LayoutGrid className="w-4 h-4" /> Product Detail
+          </p>
+          <h1 className="max-w-4xl text-4xl md:text-6xl font-extrabold tracking-tight text-white mb-6">
+            {product.name}
+          </h1>
+          <p className="max-w-2xl text-lg text-white/70 leading-relaxed mb-8">
+            {product.description}
+          </p>
+          <div className="flex flex-wrap gap-4">
+            <Link href="/register">
+              <Button className="bg-gradient-to-r from-primary to-accent text-white border-0 shadow-glow rounded-full px-8 h-12 hover:scale-105 transition-all">
+                Mulai Sekarang
+              </Button>
+            </Link>
+            <a href={product.demoUrl}>
+              <Button variant="outline" className="border-white/20 bg-white/5 backdrop-blur-md text-white hover:bg-white/10 rounded-full px-8 h-12 transition-all">
+                <CirclePlay className="mr-2 h-5 w-5" />
+                Lihat Demo
+              </Button>
+            </a>
+          </div>
         </div>
       </div>
 
-      <section className="mt-10 grid gap-6 lg:grid-cols-[1fr_0.9fr]">
-        <Card className="space-y-6 p-8">
-          <div>
-            <p className="text-xs uppercase tracking-[0.22em] text-ink/45">Fitur Utama</p>
-            <div className="mt-4 grid gap-3">
+      <section className="grid gap-8 lg:grid-cols-[1fr_400px] relative z-10">
+        <div className="space-y-8">
+          {/* Fitur Utama */}
+          <div className="glass-panel rounded-3xl p-8 md:p-10 border border-white/10 shadow-[0_8px_30px_rgb(0,0,0,0.12)]">
+            <div className="flex items-center gap-3 mb-6">
+              <Zap className="w-6 h-6 text-accent" />
+              <h2 className="text-2xl font-bold text-white">Fitur Utama</h2>
+            </div>
+            <div className="grid gap-4 sm:grid-cols-2">
               {product.features.map((feature) => (
-                <div key={feature} className="rounded-2xl bg-[#f6f0e5] px-4 py-3 text-sm text-ink/76">
-                  {feature}
+                <div key={feature} className="flex items-start gap-3 rounded-2xl bg-white/5 border border-white/5 p-4 hover:bg-white/10 transition-colors">
+                  <CheckCircle2 className="w-5 h-5 text-primary shrink-0 mt-0.5" />
+                  <span className="text-sm text-white/80 leading-relaxed">{feature}</span>
                 </div>
               ))}
             </div>
           </div>
 
-          <div>
-            <p className="text-xs uppercase tracking-[0.22em] text-ink/45">Setup Wizard</p>
-            <div className="mt-4 grid gap-3 md:grid-cols-2">
+          {/* Setup Wizard */}
+          <div className="glass-panel rounded-3xl p-8 md:p-10 border border-white/10 shadow-[0_8px_30px_rgb(0,0,0,0.12)]">
+            <h2 className="text-2xl font-bold text-white mb-6">Setup Wizard Flow</h2>
+            <div className="grid gap-4 sm:grid-cols-2">
               {product.setupFields.map((field, index) => (
-                <div key={field} className="rounded-3xl border border-border bg-white/75 p-4">
-                  <p className="text-xs uppercase tracking-[0.22em] text-ink/45">Step {index + 1}</p>
-                  <p className="mt-2 text-sm font-medium text-ink">{field}</p>
+                <div key={field} className="relative rounded-2xl border border-white/10 bg-background/50 p-5 overflow-hidden group hover:border-primary/50 transition-colors">
+                  <div className="absolute top-0 right-0 w-16 h-16 bg-primary/10 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-150" />
+                  <p className="text-xs font-bold uppercase tracking-widest text-primary/70 mb-2">Step {index + 1}</p>
+                  <p className="text-sm font-semibold text-white relative z-10">{field}</p>
                 </div>
               ))}
             </div>
           </div>
 
-          <div>
-            <p className="text-xs uppercase tracking-[0.22em] text-ink/45">FAQ</p>
-            <div className="mt-4 grid gap-4">
+          {/* FAQ */}
+          <div className="glass-panel rounded-3xl p-8 md:p-10 border border-white/10 shadow-[0_8px_30px_rgb(0,0,0,0.12)]">
+            <h2 className="text-2xl font-bold text-white mb-6">FAQ Layanan</h2>
+            <div className="grid gap-4">
               {product.faq.length ? (
                 product.faq.map((item) => (
-                  <div key={item.question} className="rounded-3xl border border-border bg-white/75 p-5">
-                    <h3 className="text-lg font-semibold text-ink">{item.question}</h3>
-                    <p className="mt-3 text-sm leading-7 text-ink/68">{item.answer}</p>
+                  <div key={item.question} className="rounded-2xl border border-white/10 bg-white/5 p-6 hover:bg-white/10 transition-colors">
+                    <h3 className="text-base font-bold text-white mb-2">{item.question}</h3>
+                    <p className="text-sm leading-relaxed text-white/60">{item.answer}</p>
                   </div>
                 ))
               ) : (
-                <p className="text-sm text-ink/62">FAQ khusus produk ini bisa ditambahkan dari panel admin.</p>
+                <p className="text-sm text-white/50 italic bg-white/5 p-4 rounded-xl">FAQ khusus produk ini bisa ditambahkan dari panel admin.</p>
               )}
             </div>
           </div>
-        </Card>
+        </div>
 
-        <Card className="space-y-5 p-8">
-          <p className="text-xs uppercase tracking-[0.22em] text-ink/45">Paket Langganan</p>
-          {product.packages.map((pkg) => (
-            <div key={pkg.code} className="rounded-[28px] border border-border bg-white/75 p-5">
-              <div className="flex items-start justify-between gap-4">
-                <div>
-                  <h3 className="text-xl font-semibold text-ink">{pkg.name}</h3>
-                  <p className="mt-1 text-sm text-ink/58">{pkg.durationLabel}</p>
-                </div>
-                {pkg.popular ? (
-                  <span className="rounded-full bg-[#0f5560] px-3 py-1 text-xs font-semibold uppercase tracking-[0.16em] text-white">
-                    Paling Laku
-                  </span>
-                ) : null}
-              </div>
-              <p className="mt-4 text-3xl font-semibold text-ink">{currency.format(pkg.price)}</p>
+        {/* Paket Langganan Sidebar */}
+        <div className="space-y-6">
+          <div className="glass-panel rounded-3xl p-8 border border-white/10 shadow-glow sticky top-28">
+            <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-primary animate-pulse" /> Paket Langganan
+            </h2>
+            <div className="space-y-4 mb-8">
+              {product.packages.map((pkg) => (
+                <label key={pkg.code} className="block cursor-pointer">
+                  <div className={`relative rounded-2xl border p-5 transition-all duration-300 ${pkg.popular ? 'border-primary bg-primary/10 shadow-[0_0_15px_rgba(138,43,226,0.15)]' : 'border-white/10 bg-white/5 hover:border-white/30'}`}>
+                    {pkg.popular && (
+                      <div className="absolute -top-3 right-4">
+                        <span className="rounded-full bg-gradient-to-r from-primary to-accent px-3 py-1 text-[10px] font-black uppercase tracking-widest text-white shadow-lg">
+                          Paling Laku
+                        </span>
+                      </div>
+                    )}
+                    <div className="flex justify-between items-end mb-2">
+                      <h3 className="text-lg font-bold text-white">{pkg.name}</h3>
+                      <p className="text-xs font-semibold uppercase tracking-wider text-white/50">{pkg.durationLabel}</p>
+                    </div>
+                    <p className="text-2xl font-extrabold text-white">
+                      {currency.format(pkg.price)}
+                    </p>
+                  </div>
+                </label>
+              ))}
             </div>
-          ))}
-          <Link href="/register" className="inline-flex items-center gap-2 text-sm font-semibold text-accentStrong">
-            Lanjut checkout
-            <ArrowRight className="h-4 w-4" />
-          </Link>
-        </Card>
+            
+            <Link href="/register" className="w-full block">
+              <Button className="w-full h-12 bg-white text-black hover:bg-white/90 rounded-full font-bold shadow-[0_0_20px_rgba(255,255,255,0.15)] transition-all hover:scale-[1.02]">
+                Lanjut Checkout
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+            </Link>
+          </div>
+        </div>
       </section>
     </main>
   );

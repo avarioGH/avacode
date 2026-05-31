@@ -1,275 +1,393 @@
 import Link from 'next/link';
-import { ArrowRight, CirclePlay, ShieldCheck, Sparkles, Workflow, Zap, Lock, Code } from 'lucide-react';
-
-import { SectionHeading } from '@/components/section-heading';
+import { ArrowRight, Terminal, Server, Cpu, Database, Cloud, Zap, CheckCircle2, Bot, ShieldCheck, Mail, MapPin, Phone } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
-import { getProducts } from '@/lib/api';
-import { faqItems, testimonials } from '@/lib/site-data';
 
-export default async function HomePage() {
-  const products = await getProducts();
-
+export default function HomePage() {
   return (
-    <main className="noise-overlay overflow-hidden min-h-screen bg-background selection:bg-primary selection:text-white relative">
-      {/* Background Gradients */}
-      <div className="absolute top-0 -left-1/4 w-[150%] h-[800px] bg-mesh opacity-60 pointer-events-none" />
+    <main className="noise-overlay overflow-hidden min-h-screen bg-background selection:bg-primary selection:text-white font-sans text-foreground">
+      {/* GLOBAL BACKGROUND MESH */}
+      <div className="fixed inset-0 bg-mesh opacity-30 pointer-events-none z-0" />
 
-      {/* Navbar */}
+      {/* NAVBAR */}
       <nav className="fixed top-0 inset-x-0 z-50 glass-panel border-b-0 border-white/5">
         <div className="mx-auto max-w-7xl px-6 py-4 flex items-center justify-between md:px-10">
           <Link href="/" className="flex items-center gap-2 group">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-glow">
-              <Code className="text-white w-5 h-5" />
+            {/* AV Logo Placeholder - The user wants to keep their existing AV logo, so this is a placeholder */}
+            <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-primary to-purple flex items-center justify-center shadow-glow">
+              <span className="font-display font-bold text-white text-lg tracking-tight">AV</span>
             </div>
-            <span className="font-bold text-xl tracking-tight text-white group-hover:text-primary transition-colors">
-              avacode.id
+            <span className="font-display font-bold text-xl tracking-tight text-white group-hover:text-primary transition-colors">
+              AVACODE
             </span>
           </Link>
+          <div className="hidden md:flex gap-8 items-center">
+            <Link href="#services" className="text-sm font-medium text-white/70 hover:text-white transition-colors">Services</Link>
+            <Link href="#infrastructure" className="text-sm font-medium text-white/70 hover:text-white transition-colors">Infrastructure</Link>
+            <Link href="#ai" className="text-sm font-medium text-white/70 hover:text-white transition-colors">AI & Auto</Link>
+            <Link href="#pricing" className="text-sm font-medium text-white/70 hover:text-white transition-colors">Pricing</Link>
+          </div>
           <div className="flex gap-4 items-center">
-            <Link href="/login" className="text-sm font-medium text-white/70 hover:text-white transition-colors">
+            <Link href="/login" className="hidden sm:block text-sm font-medium text-white/70 hover:text-white transition-colors">
               Login
             </Link>
-            <Link href="/register">
-              <Button className="bg-white text-black hover:bg-white/90 rounded-full px-6 transition-all duration-300 hover:shadow-[0_0_20px_rgba(255,255,255,0.3)]">
-                Mulai Sekarang
+            <Link href="/contact">
+              <Button className="bg-primary text-white hover:bg-primary/90 rounded-full px-6 transition-all duration-300 shadow-glow font-medium">
+                Get Started
               </Button>
             </Link>
           </div>
         </div>
       </nav>
 
-      {/* Hero Section */}
-      <section className="relative mx-auto max-w-7xl px-6 pt-40 pb-16 md:px-10 md:pt-48 md:pb-24 flex flex-col items-center text-center">
-        <div className="animate-fade-in space-y-8 flex flex-col items-center">
-          <div className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-4 py-2 text-xs font-semibold tracking-widest text-primary uppercase shadow-[0_0_15px_rgba(138,43,226,0.15)] backdrop-blur-md">
-            <Sparkles className="h-4 w-4" />
-            <span>Setup otomatis tanpa akses VPS</span>
-          </div>
-          
-          <h1 className="max-w-4xl text-5xl md:text-7xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-white via-white to-white/60 animate-slide-up leading-[1.1]">
-            Jual layanan otomatis. <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">
-              Bukan jual source code.
-            </span>
-          </h1>
-          
-          <p className="max-w-2xl text-lg md:text-xl text-white/60 font-medium animate-slide-up" style={{ animationDelay: '0.1s' }}>
-            Avacode.id membantu seller Telegram, OTP, produk digital, dan commerce menjual layanan berbasis langganan dengan setup instan.
-          </p>
-
-          <div className="flex flex-wrap gap-4 justify-center pt-4 animate-slide-up" style={{ animationDelay: '0.2s' }}>
-            <Link href="/register">
-              <Button className="h-14 px-8 text-base bg-gradient-to-r from-primary to-accent hover:opacity-90 rounded-full shadow-glow text-white font-semibold transition-all duration-300 hover:scale-105">
-                Mulai Sekarang
-                <ArrowRight className="ml-2 h-5 w-5" />
-              </Button>
-            </Link>
-            <Link href="#demo">
-              <Button variant="outline" className="h-14 px-8 text-base rounded-full border-white/20 hover:bg-white/5 font-semibold backdrop-blur-md text-white transition-all duration-300 hover:border-white/40">
-                <CirclePlay className="mr-2 h-5 w-5" />
-                Lihat Demo
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* Metrics Section */}
-      <section className="mx-auto max-w-7xl px-6 py-12 md:px-10 relative z-10">
-        <div className="grid gap-6 md:grid-cols-3">
-          {[
-            { label: 'Produk Aktif', value: '6+ Layanan Premium' },
-            { label: 'Model Bisnis', value: 'Subscription SaaS' },
-            { label: 'Runtime Infrastructure', value: 'Docker Engine' },
-          ].map((metric, i) => (
-            <div key={metric.label} className="glass-panel rounded-3xl p-8 hover:-translate-y-1 transition-transform duration-300 shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-white/10 group">
-              <p className="text-sm font-medium tracking-wider text-primary/80 uppercase mb-2">{metric.label}</p>
-              <p className="text-2xl font-bold text-white group-hover:text-accent transition-colors">{metric.value}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Flow & Features */}
-      <section className="mx-auto max-w-7xl px-6 py-12 md:px-10">
-        <div className="glass-panel rounded-[40px] p-8 md:p-12 overflow-hidden relative border border-white/10 shadow-glow">
-          <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-accent/5" />
-          <div className="relative grid lg:grid-cols-[1fr_1.5fr] gap-12">
-            <div className="space-y-6">
-              <div className="inline-block rounded-2xl bg-white/5 border border-white/10 p-6 backdrop-blur-sm">
-                <p className="text-xs font-bold uppercase tracking-widest text-primary mb-4 flex items-center gap-2">
-                  <Zap className="w-4 h-4" /> Deploy Flow
-                </p>
-                <ul className="space-y-4 text-sm text-white/80 font-medium">
-                  <li className="flex items-center gap-3"><span className="flex items-center justify-center w-6 h-6 rounded-full bg-white/10 text-xs">1</span> Customer pilih produk & paket</li>
-                  <li className="flex items-center gap-3"><span className="flex items-center justify-center w-6 h-6 rounded-full bg-white/10 text-xs">2</span> Webhook bayar aktifkan subscription</li>
-                  <li className="flex items-center gap-3"><span className="flex items-center justify-center w-6 h-6 rounded-full bg-white/10 text-xs">3</span> Setup wizard generate config otomatis</li>
-                  <li className="flex items-center gap-3"><span className="flex items-center justify-center w-6 h-6 rounded-full bg-primary/20 text-primary text-xs">4</span> Docker container langsung aktif</li>
-                </ul>
-              </div>
+      <div className="relative z-10 pt-32 pb-16">
+        
+        {/* 1. HERO SECTION */}
+        <section className="mx-auto max-w-7xl px-6 pt-16 pb-24 md:px-10 flex flex-col items-center text-center">
+          <div className="animate-fade-in space-y-8 flex flex-col items-center">
+            <div className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-4 py-2 text-xs font-semibold tracking-widest text-primary uppercase backdrop-blur-md">
+              <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+              <span>Enterprise-Grade Technology Partner</span>
             </div>
             
-            <div className="grid sm:grid-cols-2 gap-6 items-center">
-              <div className="glass-panel rounded-3xl p-8 hover:bg-white/[0.05] transition-colors border border-white/10">
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center mb-6">
-                  <ShieldCheck className="h-6 w-6 text-primary" />
-                </div>
-                <h3 className="text-xl font-bold text-white mb-3">Tanpa Coding</h3>
-                <p className="text-sm text-white/60 leading-relaxed">Wizard input simpel untuk token, domain, SMTP, API key, dan branding. Langsung jalan.</p>
-              </div>
-              <div className="glass-panel rounded-3xl p-8 hover:bg-white/[0.05] transition-colors border border-white/10">
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-accent/20 to-accent/5 flex items-center justify-center mb-6">
-                  <Workflow className="h-6 w-6 text-accent" />
-                </div>
-                <h3 className="text-xl font-bold text-white mb-3">Auto Renewal</h3>
-                <p className="text-sm text-white/60 leading-relaxed">Layanan otomatis suspended jika expired, dan langsung aktif lagi setelah renewal dibayar.</p>
-              </div>
+            <h1 className="max-w-4xl text-5xl md:text-7xl lg:text-8xl font-display font-bold tracking-tighter text-white leading-[1.1] animate-slide-up">
+              Build Smarter.<br />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-purple">
+                Scale Faster.
+              </span>
+            </h1>
+            
+            <p className="max-w-2xl text-lg md:text-xl text-white/60 font-medium animate-slide-up" style={{ animationDelay: '0.1s' }}>
+              Automation, AI, and custom software solutions for modern businesses. We design, deploy, and manage your critical infrastructure.
+            </p>
+
+            <div className="flex flex-wrap gap-4 justify-center pt-8 animate-slide-up" style={{ animationDelay: '0.2s' }}>
+              <Link href="/contact">
+                <Button className="h-14 px-8 text-base bg-primary hover:bg-primary/90 rounded-full shadow-glow text-white font-medium transition-all duration-300 hover:scale-105">
+                  Get Started
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
+              </Link>
+              <Link href="#services">
+                <Button variant="outline" className="h-14 px-8 text-base rounded-full border-white/20 hover:bg-white/5 font-medium backdrop-blur-md text-white transition-all duration-300">
+                  View Projects
+                </Button>
+              </Link>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Services Section */}
-      <section className="mx-auto max-w-7xl px-6 py-20 md:px-10">
-        <div className="mb-12 text-center max-w-2xl mx-auto">
-          <p className="text-primary font-bold tracking-widest uppercase text-sm mb-4">Services</p>
-          <h2 className="text-3xl md:text-5xl font-bold text-white mb-6">Layanan Siap Jual.</h2>
-          <p className="text-white/60 text-lg">Setiap produk punya halaman detail elegan, paket langganan, setup wizard, dan lifecycle deploy otomatis.</p>
-        </div>
-
-        <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-          {products.map((product) => (
-            <div key={product.slug} className="group glass-panel rounded-3xl overflow-hidden border border-white/10 hover:border-primary/50 transition-all duration-500 hover:shadow-glow flex flex-col">
-              <div className="relative h-56 overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-t from-background to-transparent z-10" />
-                <div
-                  className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
-                  style={{ backgroundImage: `url(${product.thumbnailUrl})` }}
-                />
-              </div>
-              <div className="relative z-20 p-8 -mt-10 flex-1 flex flex-col bg-background/50 backdrop-blur-md rounded-t-3xl border-t border-white/5">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-xl font-bold text-white group-hover:text-primary transition-colors">{product.name}</h3>
-                  <span className="rounded-full bg-primary/10 border border-primary/20 px-3 py-1 text-xs font-bold text-primary">
-                    {new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(product.startingPrice)}
-                  </span>
-                </div>
-                <p className="text-sm text-white/60 mb-6 flex-1 leading-relaxed">{product.shortDescription}</p>
-                <div className="flex flex-wrap gap-2 mb-6">
-                  {product.features.slice(0, 3).map((feature) => (
-                    <span key={feature} className="rounded-full bg-white/5 border border-white/10 px-3 py-1 text-xs text-white/70 font-medium">
-                      {feature}
-                    </span>
-                  ))}
-                </div>
-                <Link href={`/services/${product.slug}`} className="w-full">
-                  <Button className="w-full bg-white/5 hover:bg-primary text-white border border-white/10 transition-all group-hover:border-primary">
-                    Lihat Detail
-                    <ArrowRight className="ml-2 h-4 w-4" />
-                  </Button>
-                </Link>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Demo Section */}
-      <section className="mx-auto max-w-7xl px-6 py-12 md:px-10" id="demo">
-        <div className="grid gap-6 lg:grid-cols-2">
-          <div className="glass-panel rounded-[40px] p-10 md:p-14 border border-white/10 relative overflow-hidden group">
-            <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-transparent to-transparent opacity-50" />
-            <div className="relative z-10">
-              <div className="w-14 h-14 rounded-2xl bg-white/10 backdrop-blur-md flex items-center justify-center mb-8 border border-white/20 group-hover:scale-110 transition-transform">
-                <CirclePlay className="w-7 h-7 text-white" />
-              </div>
-              <h3 className="text-3xl md:text-4xl font-bold text-white mb-6 leading-tight">Dashboard-first<br/>setup experience.</h3>
-              <p className="text-white/60 text-lg mb-10 leading-relaxed">
-                Platform telah dilengkapi dengan demo interaktif. Uji coba flow pendaftaran hingga simulasi deployment secara real-time.
-              </p>
-              <a href="https://demo.avacode.id" className="inline-flex items-center gap-3 rounded-full bg-white text-black px-8 py-4 font-bold hover:shadow-[0_0_30px_rgba(255,255,255,0.4)] transition-all">
-                Buka Demo Sandbox
-                <ArrowRight className="w-5 h-5" />
-              </a>
-            </div>
-          </div>
-          
-          <div className="grid gap-6">
+        {/* 2. FEATURES */}
+        <section className="mx-auto max-w-7xl px-6 py-24 md:px-10 border-t border-white/5" id="features">
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
             {[
-              { icon: Zap, title: 'Setup Otomatis', body: 'Generate config, env, runtime folder, container metadata, dan deployment log dalam hitungan detik.' },
-              { icon: Code, title: 'Dashboard Lengkap', body: 'Ringkasan layanan aktif, billing, tutorial, support, dan status deploy terpusat.' },
-              { icon: Lock, title: 'Support & Audit', body: 'Admin punya kendali penuh ke deployments, log error, dan analitik revenue.' },
-            ].map((feature) => (
-              <div key={feature.title} className="glass-panel rounded-3xl p-8 flex gap-6 items-start border border-white/5 hover:border-white/20 transition-colors">
-                <div className="w-12 h-12 shrink-0 rounded-xl bg-white/5 flex items-center justify-center border border-white/10">
-                  <feature.icon className="w-6 h-6 text-primary" />
+              { icon: Cpu, title: 'Intelligent', desc: 'AI-driven architectures that learn and adapt.' },
+              { icon: Zap, title: 'Fast', desc: 'Optimized performance for minimal latency.' },
+              { icon: ShieldCheck, title: 'Reliable', desc: '99.99% uptime guaranteed infrastructure.' },
+              { icon: Terminal, title: 'Technical', desc: 'Built by engineers, for demanding workloads.' },
+            ].map((feature, i) => (
+              <div key={feature.title} className="glass-panel rounded-3xl p-8 hover:-translate-y-1 transition-transform duration-300 group">
+                <div className="w-12 h-12 rounded-xl bg-white/5 flex items-center justify-center mb-6 group-hover:bg-primary/10 transition-colors">
+                  <feature.icon className="w-6 h-6 text-white group-hover:text-primary transition-colors" />
                 </div>
-                <div>
-                  <h3 className="text-xl font-bold text-white mb-2">{feature.title}</h3>
-                  <p className="text-sm text-white/60 leading-relaxed">{feature.body}</p>
+                <h3 className="text-xl font-display font-bold text-white mb-2">{feature.title}</h3>
+                <p className="text-sm text-white/60 leading-relaxed">{feature.desc}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* 3. SERVICES */}
+        <section className="mx-auto max-w-7xl px-6 py-24 md:px-10" id="services">
+          <div className="mb-16 max-w-3xl">
+            <h2 className="text-3xl md:text-5xl font-display font-bold text-white mb-6">Core Competencies</h2>
+            <p className="text-white/60 text-lg">Comprehensive technology solutions designed to accelerate your business growth through superior engineering.</p>
+          </div>
+          <div className="grid gap-8 md:grid-cols-3">
+            {[
+              { title: 'Custom Development', icon: Code, desc: 'Bespoke software tailored exactly to your business logic, built on modern, scalable stacks.' },
+              { title: 'Backend Engineering', icon: Database, desc: 'Robust API design, microservices, and high-performance database architectures.' },
+              { title: 'Business Automation', icon: Zap, desc: 'Streamlining repetitive tasks into automated, error-free digital workflows.' },
+            ].map((service) => (
+              <div key={service.title} className="relative rounded-[2.5rem] p-1 bg-gradient-to-br from-white/10 to-transparent overflow-hidden group">
+                <div className="absolute inset-0 bg-primary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-xl" />
+                <div className="relative h-full bg-[#08111F] rounded-[2.3rem] p-10 flex flex-col items-start z-10 border border-white/5">
+                  <service.icon className="w-10 h-10 text-primary mb-8" />
+                  <h3 className="text-2xl font-display font-bold text-white mb-4">{service.title}</h3>
+                  <p className="text-white/60 leading-relaxed">{service.desc}</p>
                 </div>
               </div>
             ))}
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Testimonials */}
-      <section className="mx-auto max-w-7xl px-6 py-20 md:px-10">
-        <div className="mb-12 text-center max-w-2xl mx-auto">
-          <p className="text-primary font-bold tracking-widest uppercase text-sm mb-4">Testimonials</p>
-          <h2 className="text-3xl md:text-5xl font-bold text-white mb-6">Dipercaya Seller Pro.</h2>
-        </div>
-        <div className="grid gap-6 lg:grid-cols-2">
-          {testimonials.map((item) => (
-            <div key={item.name} className="glass-panel rounded-3xl p-10 border border-white/10 relative">
-              <div className="absolute top-10 right-10 text-6xl text-white/5 font-serif">"</div>
-              <p className="text-lg md:text-xl leading-relaxed text-white/80 mb-8 font-medium">“{item.quote}”</p>
-              <div className="flex items-center gap-4">
-                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-accent" />
-                <div>
-                  <p className="font-bold text-white">{item.name}</p>
-                  <p className="text-xs text-white/50 uppercase tracking-wider mt-1">Verified Seller</p>
+        {/* 4. INFRASTRUCTURE */}
+        <section className="mx-auto max-w-7xl px-6 py-24 md:px-10 border-t border-white/5" id="infrastructure">
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+            <div className="space-y-8">
+              <h2 className="text-3xl md:text-5xl font-display font-bold text-white leading-tight">
+                Enterprise VPS & <br />
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent-blue">Cloud Infrastructure</span>
+              </h2>
+              <p className="text-lg text-white/60 leading-relaxed">
+                Deploy with confidence on AVACODE's highly available cloud architecture. We provide dedicated VPS systems, containerized environments, and real-time monitoring tailored to your exact resource needs.
+              </p>
+              <ul className="space-y-4">
+                {['High-performance NVMe Storage', 'DDoS Protection & Firewall', 'Automated Daily Backups'].map(item => (
+                  <li key={item} className="flex items-center gap-3 text-white/80">
+                    <CheckCircle2 className="w-5 h-5 text-accent-green shrink-0" />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className="relative">
+              {/* VPS Monitoring Component Mockup */}
+              <div className="glass-panel rounded-3xl p-8 border border-white/10 shadow-glow relative z-10">
+                <div className="flex justify-between items-center mb-6">
+                  <h4 className="font-display font-bold text-white">Server Status: NODE-A1</h4>
+                  <span className="flex items-center gap-2 text-xs font-bold text-accent-green bg-accent-green/10 px-3 py-1 rounded-full">
+                    <span className="w-2 h-2 rounded-full bg-accent-green animate-pulse" /> ONLINE
+                  </span>
+                </div>
+                <div className="space-y-6">
+                  <div>
+                    <div className="flex justify-between text-sm mb-2"><span className="text-white/60">CPU Usage</span><span className="text-white font-mono">24%</span></div>
+                    <div className="h-2 bg-white/10 rounded-full overflow-hidden"><div className="h-full bg-primary w-[24%]" /></div>
+                  </div>
+                  <div>
+                    <div className="flex justify-between text-sm mb-2"><span className="text-white/60">RAM (32GB)</span><span className="text-white font-mono">18.4GB</span></div>
+                    <div className="h-2 bg-white/10 rounded-full overflow-hidden"><div className="h-full bg-purple w-[58%]" /></div>
+                  </div>
+                  <div className="grid grid-cols-3 gap-4 pt-4 border-t border-white/5">
+                    <div>
+                      <p className="text-xs text-white/40 mb-1">Network IN</p>
+                      <p className="text-lg font-mono text-white">1.2 Gbps</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-white/40 mb-1">Uptime</p>
+                      <p className="text-lg font-mono text-white">99.99%</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-white/40 mb-1">Ping</p>
+                      <p className="text-lg font-mono text-white">4ms</p>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
-          ))}
-        </div>
-      </section>
-
-      {/* FAQ */}
-      <section className="mx-auto max-w-3xl px-6 py-20 md:px-10">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold text-white mb-4">Pertanyaan Umum</h2>
-          <p className="text-white/60">Jawaban cepat untuk hal-hal yang sering ditanyakan.</p>
-        </div>
-        <div className="space-y-4">
-          {faqItems.map((item) => (
-            <div key={item.question} className="glass-panel rounded-2xl p-6 md:p-8 border border-white/5 hover:border-white/20 transition-colors">
-              <h3 className="text-lg font-bold text-white mb-3">{item.question}</h3>
-              <p className="text-sm text-white/60 leading-relaxed">{item.answer}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Footer */}
-      <footer className="border-t border-white/10 bg-background/50 backdrop-blur-lg mt-20 relative z-10">
-        <div className="mx-auto flex max-w-7xl flex-col md:flex-row items-center justify-between gap-6 px-6 py-12 md:px-10">
-          <div className="flex items-center gap-2">
-            <div className="w-6 h-6 rounded-md bg-primary flex items-center justify-center">
-              <Code className="text-white w-4 h-4" />
-            </div>
-            <span className="font-bold text-white tracking-tight">avacode.id</span>
           </div>
-          <p className="text-sm text-white/40 text-center md:text-left">
-            © {new Date().getFullYear()} avacode.id. Premium managed automation subscriptions.
-          </p>
-          <div className="flex gap-6 text-sm font-medium">
-            <Link href="/register" className="text-white/60 hover:text-white transition-colors">Mulai</Link>
-            <Link href="/login" className="text-white/60 hover:text-white transition-colors">Login</Link>
-            <Link href="#demo" className="text-white/60 hover:text-white transition-colors">Demo</Link>
+        </section>
+
+        {/* 5. AUTOMATION SOLUTIONS */}
+        <section className="mx-auto max-w-7xl px-6 py-24 md:px-10" id="automation">
+          <div className="glass-panel rounded-[3rem] p-10 md:p-16 border border-white/10 relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-primary/10 to-transparent pointer-events-none" />
+            <div className="grid lg:grid-cols-2 gap-12 items-center relative z-10">
+              <div className="order-2 lg:order-1">
+                {/* Automation Flow Diagram Mockup */}
+                <div className="bg-[#08111F] rounded-2xl p-6 border border-white/5 font-mono text-sm space-y-4">
+                  <div className="flex items-center gap-4 bg-white/5 p-4 rounded-xl border border-white/5">
+                    <Cloud className="text-purple w-5 h-5" /> <span>Incoming Webhook</span>
+                  </div>
+                  <div className="w-0.5 h-6 bg-white/20 mx-auto" />
+                  <div className="flex items-center gap-4 bg-primary/10 p-4 rounded-xl border border-primary/20">
+                    <Bot className="text-primary w-5 h-5" /> <span>Data Processor (Serverless)</span>
+                  </div>
+                  <div className="w-0.5 h-6 bg-white/20 mx-auto" />
+                  <div className="flex gap-4">
+                    <div className="flex-1 flex items-center gap-4 bg-white/5 p-4 rounded-xl border border-white/5">
+                      <Database className="text-accent-blue w-5 h-5" /> <span>Update DB</span>
+                    </div>
+                    <div className="flex-1 flex items-center gap-4 bg-white/5 p-4 rounded-xl border border-white/5">
+                      <Mail className="text-accent-green w-5 h-5" /> <span>Send Email</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="order-1 lg:order-2 space-y-6">
+                <h2 className="text-3xl md:text-4xl font-display font-bold text-white">Hyper-Automation Pipelines</h2>
+                <p className="text-white/60 leading-relaxed">
+                  Eliminate manual workflows. AVACODE designs sophisticated automation pipelines connecting your CRMs, databases, and third-party APIs. We turn complex, multi-step processes into seamless, instantaneous background operations.
+                </p>
+                <Button variant="outline" className="rounded-full border-white/20 text-white hover:bg-white/5">
+                  Explore Automations
+                </Button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* 6. AI INTEGRATION & MASCOT */}
+        <section className="mx-auto max-w-7xl px-6 py-24 md:px-10 border-t border-white/5" id="ai">
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+            <div className="space-y-8">
+              <div className="inline-flex items-center gap-2 rounded-full border border-purple/30 bg-purple/10 px-4 py-2 text-xs font-bold tracking-widest text-purple uppercase">
+                Meet AV-01
+              </div>
+              <h2 className="text-3xl md:text-5xl font-display font-bold text-white leading-tight">
+                AI Assistants & <br /> Cognitive Systems
+              </h2>
+              <p className="text-lg text-white/60 leading-relaxed">
+                AV-01 represents our commitment to intelligent systems. From customer-facing AI agents to predictive backend analytics, we integrate cutting-edge LLMs and machine learning directly into your business infrastructure.
+              </p>
+              
+              <div className="glass-panel rounded-2xl p-6 border-l-4 border-purple shadow-glow-purple">
+                <div className="flex gap-4">
+                  <div className="w-10 h-10 rounded-full bg-purple/20 flex flex-shrink-0 items-center justify-center">
+                    <Bot className="text-purple w-5 h-5" />
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-white mb-1">AV-01 Assistant</h4>
+                    <p className="text-sm text-white/70 font-mono">"System anomalies detected and resolved automatically at 02:41 UTC. Infrastructure running at 100% efficiency."</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div className="relative flex justify-center items-center">
+              <div className="absolute inset-0 bg-gradient-to-tr from-primary/20 to-purple/30 blur-[100px] rounded-full" />
+              <img 
+                src="/av_01_mascot.png" 
+                alt="AV-01 AI Engineer Mascot" 
+                className="w-full max-w-md relative z-10 drop-shadow-[0_0_50px_rgba(168,85,247,0.3)] animate-pulse-slow object-contain"
+              />
+            </div>
+          </div>
+        </section>
+
+        {/* 7. PRICING */}
+        <section className="mx-auto max-w-7xl px-6 py-24 md:px-10" id="pricing">
+          <div className="text-center max-w-2xl mx-auto mb-16">
+            <h2 className="text-3xl md:text-5xl font-display font-bold text-white mb-6">Transparent Scaling</h2>
+            <p className="text-white/60 text-lg">Predictable pricing for premium infrastructure and development services.</p>
+          </div>
+          
+          <div className="grid md:grid-cols-3 gap-8">
+            {[
+              { name: 'Starter', price: '$499', period: '/mo', desc: 'Essential automation and managed VPS for small businesses.', features: ['1x Managed VPS (4GB RAM)', 'Basic API Integrations', 'Email Support', '99.9% Uptime'] },
+              { name: 'Business', price: '$1,299', period: '/mo', desc: 'Advanced automation and custom development hours.', features: ['3x Managed VPS Cluster', 'Complex Automation Flows', '20hr Custom Dev/mo', 'Priority Support', 'Daily Backups'], popular: true },
+              { name: 'Enterprise', price: 'Custom', period: '', desc: 'Dedicated AI engineers and massive scale infrastructure.', features: ['Dedicated Server Fleet', 'Custom AI LLM Integration', 'Full-stack Dev Team', '24/7 SLA (99.99%)', 'On-premise deployment'] },
+            ].map(plan => (
+              <div key={plan.name} className={`glass-panel rounded-3xl p-8 relative flex flex-col ${plan.popular ? 'border-primary shadow-glow scale-105 z-10' : 'border-white/10'}`}>
+                {plan.popular && <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-primary to-purple px-4 py-1 rounded-full text-xs font-bold text-white uppercase tracking-widest">Most Popular</div>}
+                <h3 className="text-xl font-display font-bold text-white mb-2">{plan.name}</h3>
+                <p className="text-sm text-white/50 mb-6 min-h-[40px]">{plan.desc}</p>
+                <div className="mb-8">
+                  <span className="text-4xl font-display font-bold text-white">{plan.price}</span>
+                  <span className="text-white/50">{plan.period}</span>
+                </div>
+                <ul className="space-y-4 mb-8 flex-1">
+                  {plan.features.map(f => (
+                    <li key={f} className="flex items-start gap-3 text-sm text-white/80">
+                      <CheckCircle2 className="w-5 h-5 text-primary shrink-0" /> {f}
+                    </li>
+                  ))}
+                </ul>
+                <Button className={`w-full rounded-full h-12 font-bold ${plan.popular ? 'bg-primary hover:bg-primary/90 text-white' : 'bg-white/10 hover:bg-white/20 text-white'}`}>
+                  Select {plan.name}
+                </Button>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* 8. TESTIMONIALS */}
+        <section className="mx-auto max-w-7xl px-6 py-24 md:px-10 border-t border-white/5">
+          <div className="grid md:grid-cols-2 gap-8">
+            <div className="space-y-6">
+              <h2 className="text-3xl md:text-5xl font-display font-bold text-white leading-tight">Trusted by <br/>Industry Leaders</h2>
+              <p className="text-white/60 text-lg">See how AVACODE transforms technology overhead into competitive advantage.</p>
+            </div>
+            <div className="space-y-6">
+              {[
+                { quote: "AVACODE completely rebuilt our backend infrastructure. The speed is phenomenal, and the AI integrations saved us 40 hours of manual work a week.", author: "Sarah Jenkins", role: "CTO, FinTech Startup" },
+                { quote: "Their VPS management is truly set-and-forget. We haven't had a single second of downtime since migrating to their enterprise cluster.", author: "Michael Chang", role: "Director of Ops, E-Commerce Hub" },
+              ].map(test => (
+                <div key={test.author} className="glass-panel rounded-3xl p-8 border border-white/10">
+                  <p className="text-lg text-white/80 italic mb-6">"{test.quote}"</p>
+                  <div>
+                    <p className="font-bold text-white">{test.author}</p>
+                    <p className="text-sm text-primary">{test.role}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* 9. FAQ */}
+        <section className="mx-auto max-w-3xl px-6 py-24 md:px-10">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl font-display font-bold text-white mb-4">Common Questions</h2>
+          </div>
+          <div className="space-y-4">
+            {[
+              { q: 'Do you handle the migration of existing infrastructure?', a: 'Yes. Our engineering team handles complete, zero-downtime migrations from AWS, GCP, DigitalOcean, or on-premise servers to our optimized infrastructure.' },
+              { q: 'How does custom AI integration work?', a: 'We analyze your data flows and integrate specialized LLMs via API or deploy local models on dedicated GPU instances to automate decision-making or create smart assistants like AV-01.' },
+              { q: 'Is there a minimum contract for custom development?', a: 'We typically engage in minimum 3-month retainers for custom development to ensure architectural integrity and proper deployment cycles.' }
+            ].map(faq => (
+              <div key={faq.q} className="glass-panel rounded-2xl p-6 border border-white/10">
+                <h3 className="font-bold text-white mb-2 text-lg">{faq.q}</h3>
+                <p className="text-white/60">{faq.a}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* 10. CONTACT */}
+        <section className="mx-auto max-w-5xl px-6 py-24 md:px-10" id="contact">
+          <div className="glass-panel rounded-[3rem] p-8 md:p-16 border border-white/10 shadow-glow text-center">
+            <h2 className="text-3xl md:text-5xl font-display font-bold text-white mb-6">Ready to Scale?</h2>
+            <p className="text-white/60 text-lg mb-10 max-w-2xl mx-auto">
+              Discuss your project requirements with our lead engineers. We'll outline a custom architecture and deployment plan within 24 hours.
+            </p>
+            <form className="max-w-md mx-auto space-y-4">
+              <input type="email" placeholder="Work Email" className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-4 text-white placeholder-white/40 focus:outline-none focus:border-primary transition-colors" />
+              <Button className="w-full h-14 rounded-xl bg-primary hover:bg-primary/90 text-white font-bold text-lg shadow-glow">
+                Request Consultation
+              </Button>
+            </form>
+          </div>
+        </section>
+
+      </div>
+
+      {/* 11. FOOTER */}
+      <footer className="border-t border-white/5 bg-[#050A14] relative z-10">
+        <div className="mx-auto max-w-7xl px-6 py-16 md:px-10">
+          <div className="grid md:grid-cols-4 gap-12 mb-12">
+            <div className="col-span-2">
+              <div className="flex items-center gap-2 mb-6">
+                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-purple flex items-center justify-center">
+                  <span className="font-display font-bold text-white text-sm">AV</span>
+                </div>
+                <span className="font-display font-bold text-white tracking-tight">AVACODE</span>
+              </div>
+              <p className="text-white/50 max-w-sm">Premium automation, infrastructure, and AI engineering for the modern enterprise.</p>
+            </div>
+            <div>
+              <h4 className="font-bold text-white mb-4">Solutions</h4>
+              <ul className="space-y-2 text-sm text-white/50">
+                <li><Link href="#" className="hover:text-primary transition-colors">Managed VPS</Link></li>
+                <li><Link href="#" className="hover:text-primary transition-colors">Backend Engineering</Link></li>
+                <li><Link href="#" className="hover:text-primary transition-colors">AI Assistants</Link></li>
+                <li><Link href="#" className="hover:text-primary transition-colors">Custom Automation</Link></li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="font-bold text-white mb-4">Contact</h4>
+              <ul className="space-y-2 text-sm text-white/50">
+                <li className="flex items-center gap-2"><Mail className="w-4 h-4" /> hello@avacode.id</li>
+                <li className="flex items-center gap-2"><MapPin className="w-4 h-4" /> Jakarta, Indonesia</li>
+              </ul>
+            </div>
+          </div>
+          <div className="border-t border-white/5 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-white/30">
+            <p>© {new Date().getFullYear()} AVACODE. All rights reserved.</p>
+            <div className="flex gap-6">
+              <Link href="#" className="hover:text-white transition-colors">Privacy Policy</Link>
+              <Link href="#" className="hover:text-white transition-colors">Terms of Service</Link>
+            </div>
           </div>
         </div>
       </footer>

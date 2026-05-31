@@ -11,12 +11,23 @@ const config: Config = {
       colors: {
         background: 'var(--background)',
         foreground: 'var(--foreground)',
-        canvas: 'var(--canvas)',
-        ink: 'var(--ink)',
-        primary: 'var(--primary)',
-        'primary-foreground': 'var(--primary-foreground)',
-        accent: 'var(--accent)',
-        accentStrong: 'var(--accent-strong)',
+        primary: {
+          DEFAULT: '#1677FF',
+          foreground: '#FFFFFF',
+        },
+        purple: {
+          DEFAULT: '#A855F7',
+          foreground: '#FFFFFF',
+        },
+        secondary: {
+          DEFAULT: '#08111F',
+          muted: '#111827',
+          light: '#E5E7EB',
+        },
+        accent: {
+          blue: '#22D3EE',
+          green: '#10B981',
+        },
         card: 'var(--card)',
         border: 'var(--border)',
         muted: 'var(--muted)',
@@ -24,18 +35,21 @@ const config: Config = {
       },
       fontFamily: {
         sans: ['var(--font-inter)', 'sans-serif'],
+        display: ['var(--font-space-grotesk)', 'sans-serif'],
       },
       boxShadow: {
-        glow: '0 0 40px rgba(138, 43, 226, 0.4)',
+        glow: '0 0 40px rgba(22, 119, 255, 0.4)',
+        'glow-purple': '0 0 40px rgba(168, 85, 247, 0.4)',
         glass: '0 8px 32px 0 rgba(0, 0, 0, 0.37)',
       },
       backgroundImage: {
-        mesh: 'radial-gradient(circle at 15% 50%, rgba(138, 43, 226, 0.15), transparent 40%), radial-gradient(circle at 85% 30%, rgba(0, 212, 255, 0.15), transparent 40%)',
+        mesh: 'radial-gradient(circle at 15% 50%, rgba(22, 119, 255, 0.15), transparent 40%), radial-gradient(circle at 85% 30%, rgba(168, 85, 247, 0.15), transparent 40%)',
         'glass-gradient': 'linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.01) 100%)',
       },
       animation: {
         'fade-in': 'fadeIn 0.5s ease-out',
         'slide-up': 'slideUp 0.5s ease-out',
+        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
       },
       keyframes: {
         fadeIn: {
