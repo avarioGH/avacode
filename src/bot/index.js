@@ -65,6 +65,14 @@ function createBot() {
   // COMMANDS
   // ============================================================
 
+  // Hapus otomatis command yang diketik user biar chat rapi
+  bot.use(async (ctx, next) => {
+    if (ctx.message && ctx.message.text && ctx.message.text.startsWith('/')) {
+      ctx.deleteMessage().catch(() => {});
+    }
+    return next();
+  });
+
   // /start — dengan requireUser (daftar user otomatis)
   bot.start(requireUser, channelCheck(), handleStart);
 
@@ -285,6 +293,9 @@ function createBot() {
   // ============================================================
   bot.on('text', requireUser, channelCheck(), async (ctx) => {
     try {
+      // Hapus pesan teks user agar chat rapi
+      ctx.deleteMessage().catch(() => {});
+
       const session = ctx.session?.adminAction;
 
       // Admin input handlers

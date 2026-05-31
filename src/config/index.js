@@ -33,7 +33,7 @@ const config = {
   // Payment - Pakasir
   pakasir: {
     apiKey: process.env.PAKASIR_API_KEY,
-    apiUrl: process.env.PAKASIR_API_URL || 'https://pakasir.net/api/v1/',
+    apiUrl: process.env.PAKASIR_API_URL || 'https://app.pakasir.com/api/v1/',
     callbackSecret: process.env.PAKASIR_CALLBACK_SECRET,
   },
 

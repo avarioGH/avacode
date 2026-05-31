@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -10,294 +7,498 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// ============================================================
-// ENUMS
-// ============================================================
-
-enum AdminRole {
-  ADMIN
+enum TenantMemberRole {
   OWNER
+  ADMIN
+  MEMBER
 }
 
-enum TransactionStatus {
+enum ProductKind {
+  TELEGRAM_AUTO_ORDER
+  TELEGRAM_FORWARD
+  DIGITAL_PRODUCT_SITE
+  PHYSICAL_PRODUCT_SITE
+  EMAIL_OTP_SITE
+  TELEGRAM_OTP_EMAIL_DOMAIN
+}
+
+enum ProductStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum PackageInterval {
+  MONTHLY
+  QUARTERLY
+  SEMI_ANNUAL
+  ANNUAL
+}
+
+enum OrderStatus {
   PENDING
   PAID
-  DELIVERED
   CANCELLED
   EXPIRED
   REFUNDED
 }
 
-enum PaymentMethod {
-  BALANCE
+enum PaymentGateway {
   PAYDISINI
   PAKASIR
+  MANUAL
 }
 
 enum PaymentStatus {
   PENDING
-  PAID
+  SETTLED
+  FAILED
   EXPIRED
   CANCELLED
+  REFUNDED
+}
+
+enum SubscriptionStatus {
+  PENDING
+  ACTIVE
+  SUSPENDED
+  EXPIRED
+  CANCELLED
+}
+
+enum ServiceStatus {
+  DRAFT
+  DEPLOYING
+  RUNNING
+  STOPPED
+  SUSPENDED
+  ERROR
+  EXPIRED
+}
+
+enum DeploymentStatus {
+  QUEUED
+  BUILDING
+  STARTING
+  RUNNING
   FAILED
+  STOPPED
+  ROLLED_BACK
 }
 
-enum VoucherType {
-  PERCENTAGE
-  FIXED
+enum LogLevel {
+  INFO
+  WARN
+  ERROR
 }
 
-// ============================================================
-// MODELS
-// ============================================================
+enum TicketStatus {
+  OPEN
+  IN_PROGRESS
+  RESOLVED
+  CLOSED
+}
+
+enum TicketPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum AnnouncementAudience {
+  ALL
+  USERS
+  ADMINS
+  OWNERS
+}
+
+enum TutorialVisibility {
+  PUBLIC
+  CUSTOMER_ONLY
+  ADMIN_ONLY
+}
+
+enum ActivityActorType {
+  USER
+  ADMIN
+  SYSTEM
+}
+
+model Role {
+  id          String   @id @default(cuid())
+  code        String   @unique
+  name        String
+  description String?
+  users       User[]
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@map("roles")
+}
 
 model User {
-  id           String   @id @default(cuid())
-  telegramId   BigInt   @unique @map("telegram_id")
-  username     String?
-  firstName    String   @map("first_name")
-  lastName     String?  @map("last_name")
-  balance      Decimal  @default(0) @db.Decimal(15, 2)
-  totalSpent   Decimal  @default(0) @map("total_spent") @db.Decimal(15, 2)
-  totalOrders  Int      @default(0) @map("total_orders")
-  referralCode String   @unique @map("referral_code")
-  referredBy   String?  @map("referred_by")
-  isBlocked    Boolean  @default(false) @map("is_blocked")
-  joinedAt     DateTime @default(now()) @map("joined_at")
-  lastActiveAt DateTime @default(now()) @map("last_active_at")
-
-  transactions   Transaction[]
-  payments       Payment[]
-  referralsGiven Referral[]    @relation("ReferralOwner")
-  referralUsed   Referral[]    @relation("ReferredUser")
-  activityLogs   ActivityLog[]
-  deposits       Deposit[]
+  id                       String          @id @default(cuid())
+  roleId                   String          @map("role_id")
+  defaultTenantId          String?         @map("default_tenant_id")
+  name                     String
+  email                    String          @unique
+  passwordHash             String?         @map("password_hash")
+  googleId                 String?         @unique @map("google_id")
+  avatarUrl                String?         @map("avatar_url")
+  phone                    String?
+  emailVerifiedAt          DateTime?       @map("email_verified_at")
+  emailVerificationToken   String?         @unique @map("email_verification_token")
+  passwordResetToken       String?         @unique @map("password_reset_token")
+  passwordResetExpiresAt   DateTime?       @map("password_reset_expires_at")
+  isActive                 Boolean         @default(true) @map("is_active")
+  createdAt                DateTime        @default(now()) @map("created_at")
+  updatedAt                DateTime        @updatedAt @map("updated_at")
+  role                     Role            @relation(fields: [roleId], references: [id])
+  defaultTenant            Tenant?         @relation("UserDefaultTenant", fields: [defaultTenantId], references: [id])
+  ownedTenants             Tenant[]        @relation("TenantOwner")
+  memberships              TenantMember[]
+  orders                   Order[]         @relation("CustomerOrders")
+  payments                 Payment[]       @relation("CustomerPayments")
+  subscriptions            Subscription[]  @relation("CustomerSubscriptions")
+  services                 Service[]       @relation("CustomerServices")
+  supportTickets           SupportTicket[]
+  supportMessages          SupportMessage[]
+  createdAnnouncements     Announcement[]  @relation("AnnouncementAuthor")
+  createdTutorials         Tutorial[]      @relation("TutorialAuthor")
+  activityLogs             ActivityLog[]   @relation("ActorUser")
+  triggeredDeployments     Deployment[]    @relation("DeploymentTrigger")
 
   @@map("users")
 }
 
-model Admin {
-  id         String    @id @default(cuid())
-  telegramId BigInt    @unique @map("telegram_id")
-  username   String?
-  firstName  String    @map("first_name")
-  role       AdminRole @default(ADMIN)
-  addedBy    BigInt    @map("added_by")
-  addedAt    DateTime  @default(now()) @map("added_at")
-  isActive   Boolean   @default(true) @map("is_active")
+model Tenant {
+  id            String         @id @default(cuid())
+  ownerUserId    String?        @map("owner_user_id")
+  name           String
+  slug           String         @unique
+  createdAt      DateTime       @default(now()) @map("created_at")
+  updatedAt      DateTime       @updatedAt @map("updated_at")
+  ownerUser      User?          @relation("TenantOwner", fields: [ownerUserId], references: [id])
+  defaultUsers   User[]         @relation("UserDefaultTenant")
+  members        TenantMember[]
+  orders         Order[]
+  subscriptions  Subscription[]
+  services       Service[]
+  supportTickets SupportTicket[]
+  announcements  Announcement[]
+  activityLogs   ActivityLog[]
 
-  @@map("admins")
+  @@map("tenants")
 }
 
-model Category {
-  id          String    @id @default(cuid())
-  name        String
-  description String?
-  emoji       String?
-  sortOrder   Int       @default(0) @map("sort_order")
-  isActive    Boolean   @default(true) @map("is_active")
-  createdAt   DateTime  @default(now()) @map("created_at")
-  updatedAt   DateTime  @updatedAt @map("updated_at")
+model TenantMember {
+  id        String           @id @default(cuid())
+  tenantId   String           @map("tenant_id")
+  userId     String           @map("user_id")
+  role       TenantMemberRole
+  createdAt  DateTime         @default(now()) @map("created_at")
+  tenant     Tenant           @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  user       User             @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  products Product[]
-
-  @@map("categories")
+  @@unique([tenantId, userId])
+  @@map("tenant_members")
 }
 
 model Product {
-  id          String   @id @default(cuid())
-  categoryId  String   @map("category_id")
-  name        String
-  description String?
-  price       Decimal  @db.Decimal(15, 2)
-  isActive    Boolean  @default(true) @map("is_active")
-  sortOrder   Int      @default(0) @map("sort_order")
-  createdAt   DateTime @default(now()) @map("created_at")
-  updatedAt   DateTime @updatedAt @map("updated_at")
-
-  category     Category       @relation(fields: [categoryId], references: [id])
-  stocks       ProductStock[]
-  transactions Transaction[]
+  id               String         @id @default(cuid())
+  slug             String         @unique
+  kind             ProductKind
+  name             String
+  shortDescription String         @map("short_description")
+  description      String
+  thumbnailUrl     String?        @map("thumbnail_url")
+  demoUrl          String?        @map("demo_url")
+  runtimeImage     String?        @map("runtime_image")
+  runtimePort      Int?           @map("runtime_port")
+  setupSchema      Json?          @map("setup_schema")
+  featureList      Json?          @map("feature_list")
+  faq              Json?
+  screenshots      Json?
+  startingPrice    Decimal        @map("starting_price") @db.Decimal(12, 2)
+  isFeatured       Boolean        @default(false) @map("is_featured")
+  status           ProductStatus  @default(PUBLISHED)
+  createdAt        DateTime       @default(now()) @map("created_at")
+  updatedAt        DateTime       @updatedAt @map("updated_at")
+  packages         Package[]
+  orders           Order[]
+  subscriptions    Subscription[]
+  services         Service[]
+  tutorials        Tutorial[]
 
   @@map("products")
 }
 
-model ProductStock {
-  id            String    @id @default(cuid())
-  productId     String    @map("product_id")
-  content       String
-  isUsed        Boolean   @default(false) @map("is_used")
-  usedAt        DateTime? @map("used_at")
-  transactionId String?   @map("transaction_id")
-  createdAt     DateTime  @default(now()) @map("created_at")
+model Package {
+  id             String          @id @default(cuid())
+  productId      String          @map("product_id")
+  code           String
+  name           String
+  interval       PackageInterval
+  durationMonths Int             @map("duration_months")
+  price          Decimal         @db.Decimal(12, 2)
+  compareAtPrice Decimal?        @map("compare_at_price") @db.Decimal(12, 2)
+  setupFee       Decimal         @default(0) @map("setup_fee") @db.Decimal(12, 2)
+  featureList    Json?           @map("feature_list")
+  isPopular      Boolean         @default(false) @map("is_popular")
+  isActive       Boolean         @default(true) @map("is_active")
+  sortOrder      Int             @default(0) @map("sort_order")
+  createdAt      DateTime        @default(now()) @map("created_at")
+  updatedAt      DateTime        @updatedAt @map("updated_at")
+  product        Product         @relation(fields: [productId], references: [id], onDelete: Cascade)
+  orders         Order[]
+  subscriptions  Subscription[]
 
-  product     Product      @relation(fields: [productId], references: [id])
-  transaction Transaction? @relation(fields: [transactionId], references: [id])
-
-  @@map("product_stocks")
+  @@unique([productId, code])
+  @@map("packages")
 }
 
-model Transaction {
-  id            String            @id @default(cuid())
-  userId        String            @map("user_id")
-  productId     String            @map("product_id")
-  quantity      Int               @default(1)
-  unitPrice     Decimal           @map("unit_price") @db.Decimal(15, 2)
-  subtotal      Decimal           @db.Decimal(15, 2)
-  discount      Decimal           @default(0) @db.Decimal(15, 2)
-  finalAmount   Decimal           @map("final_amount") @db.Decimal(15, 2)
-  paymentMethod PaymentMethod     @map("payment_method")
-  status        TransactionStatus @default(PENDING)
-  voucherId     String?           @map("voucher_id")
-  notes         String?
-  deliveredAt   DateTime?         @map("delivered_at")
-  expiredAt     DateTime?         @map("expired_at")
-  createdAt     DateTime          @default(now()) @map("created_at")
-  updatedAt     DateTime          @updatedAt @map("updated_at")
+model Order {
+  id            String      @id @default(cuid())
+  tenantId       String      @map("tenant_id")
+  userId         String      @map("user_id")
+  productId      String      @map("product_id")
+  packageId      String      @map("package_id")
+  subscriptionId String?     @map("subscription_id")
+  invoiceNumber  String      @unique @map("invoice_number")
+  amount         Decimal     @db.Decimal(12, 2)
+  currency       String      @default("IDR")
+  status         OrderStatus @default(PENDING)
+  metadata       Json?
+  paidAt         DateTime?   @map("paid_at")
+  expiresAt      DateTime?   @map("expires_at")
+  createdAt      DateTime    @default(now()) @map("created_at")
+  updatedAt      DateTime    @updatedAt @map("updated_at")
+  tenant         Tenant      @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  user           User        @relation("CustomerOrders", fields: [userId], references: [id], onDelete: Cascade)
+  product        Product     @relation(fields: [productId], references: [id])
+  package        Package     @relation(fields: [packageId], references: [id])
+  subscription   Subscription? @relation(fields: [subscriptionId], references: [id])
+  payment        Payment?
 
-  user    User          @relation(fields: [userId], references: [id])
-  product Product       @relation(fields: [productId], references: [id])
-  voucher Voucher?      @relation(fields: [voucherId], references: [id])
-  stocks  ProductStock[]
-  payment Payment?
-
-  @@map("transactions")
+  @@map("orders")
 }
 
 model Payment {
-  id            String        @id @default(cuid())
-  transactionId String        @unique @map("transaction_id")
-  userId        String        @map("user_id")
-  gateway       String
-  gatewayTrxId  String?       @map("gateway_trx_id")
-  channel       String?
-  amount        Decimal       @db.Decimal(15, 2)
-  status        PaymentStatus @default(PENDING)
-  paymentUrl    String?       @map("payment_url")
-  qrCode        String?       @map("qr_code")
-  expiredAt     DateTime?     @map("expired_at")
-  paidAt        DateTime?     @map("paid_at")
-  rawResponse   Json?         @map("raw_response")
-  createdAt     DateTime      @default(now()) @map("created_at")
-  updatedAt     DateTime      @updatedAt @map("updated_at")
-
-  transaction Transaction @relation(fields: [transactionId], references: [id])
-  user        User        @relation(fields: [userId], references: [id])
+  id               String         @id @default(cuid())
+  orderId          String         @unique @map("order_id")
+  userId           String         @map("user_id")
+  gateway          PaymentGateway
+  status           PaymentStatus  @default(PENDING)
+  amount           Decimal        @db.Decimal(12, 2)
+  channel          String?
+  gatewayReference String?        @map("gateway_reference")
+  checkoutUrl      String?        @map("checkout_url")
+  qrCode           String?        @map("qr_code")
+  rawPayload       Json?          @map("raw_payload")
+  callbackPayload  Json?          @map("callback_payload")
+  expiresAt        DateTime?      @map("expires_at")
+  paidAt           DateTime?      @map("paid_at")
+  createdAt        DateTime       @default(now()) @map("created_at")
+  updatedAt        DateTime       @updatedAt @map("updated_at")
+  order            Order          @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  user             User           @relation("CustomerPayments", fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("payments")
 }
 
-model Deposit {
-  id           String        @id @default(cuid())
-  userId       String        @map("user_id")
-  amount       Decimal       @db.Decimal(15, 2)
-  gateway      String
-  gatewayTrxId String?       @map("gateway_trx_id")
-  channel      String?
-  status       PaymentStatus @default(PENDING)
-  paymentUrl   String?       @map("payment_url")
-  qrCode       String?       @map("qr_code")
-  expiredAt    DateTime?     @map("expired_at")
-  paidAt       DateTime?     @map("paid_at")
-  rawResponse  Json?         @map("raw_response")
-  createdAt    DateTime      @default(now()) @map("created_at")
-  updatedAt    DateTime      @updatedAt @map("updated_at")
+model Subscription {
+  id            String             @id @default(cuid())
+  tenantId       String             @map("tenant_id")
+  userId         String             @map("user_id")
+  productId      String             @map("product_id")
+  packageId      String             @map("package_id")
+  status         SubscriptionStatus @default(PENDING)
+  startedAt      DateTime           @map("started_at")
+  expiresAt      DateTime           @map("expires_at")
+  suspendedAt    DateTime?          @map("suspended_at")
+  cancelledAt    DateTime?          @map("cancelled_at")
+  autoRenew      Boolean            @default(false) @map("auto_renew")
+  createdAt      DateTime           @default(now()) @map("created_at")
+  updatedAt      DateTime           @updatedAt @map("updated_at")
+  tenant         Tenant             @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  user           User               @relation("CustomerSubscriptions", fields: [userId], references: [id], onDelete: Cascade)
+  product        Product            @relation(fields: [productId], references: [id])
+  package        Package            @relation(fields: [packageId], references: [id])
+  orders         Order[]
+  service        Service?
 
-  user User @relation(fields: [userId], references: [id])
-
-  @@map("deposits")
+  @@map("subscriptions")
 }
 
-model Setting {
-  id        String   @id @default(cuid())
-  key       String   @unique
-  value     String
-  updatedAt DateTime @updatedAt @map("updated_at")
+model Service {
+  id                String         @id @default(cuid())
+  tenantId           String         @map("tenant_id")
+  userId             String         @map("user_id")
+  subscriptionId     String         @unique @map("subscription_id")
+  productId          String         @map("product_id")
+  currentInstanceId  String?        @unique @map("current_instance_id")
+  name               String
+  slug               String         @unique
+  domain             String?
+  logoUrl            String?        @map("logo_url")
+  status             ServiceStatus  @default(DRAFT)
+  config             Json?
+  runtimePath        String?        @map("runtime_path")
+  deployedAt         DateTime?      @map("deployed_at")
+  expiresAt          DateTime?      @map("expires_at")
+  createdAt          DateTime       @default(now()) @map("created_at")
+  updatedAt          DateTime       @updatedAt @map("updated_at")
+  tenant             Tenant         @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  user               User           @relation("CustomerServices", fields: [userId], references: [id], onDelete: Cascade)
+  subscription       Subscription   @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+  product            Product        @relation(fields: [productId], references: [id])
+  currentInstance    Instance?      @relation("ServiceCurrentInstance", fields: [currentInstanceId], references: [id])
+  instances          Instance[]     @relation("ServiceInstances")
+  deployments        Deployment[]
+  supportTickets     SupportTicket[]
 
-  @@map("settings")
+  @@map("services")
 }
 
-model Channel {
-  id          String   @id @default(cuid())
-  channelId   String   @unique @map("channel_id")
-  channelName String   @map("channel_name")
-  inviteLink  String   @map("invite_link")
-  isActive    Boolean  @default(true) @map("is_active")
-  createdAt   DateTime @default(now()) @map("created_at")
+model Instance {
+  id             String        @id @default(cuid())
+  serviceId       String        @map("service_id")
+  deploymentId    String?       @unique @map("deployment_id")
+  provider        String        @default("DOCKER_ENGINE")
+  containerName   String        @unique @map("container_name")
+  containerId     String?       @unique @map("container_id")
+  image           String
+  hostPort        Int?          @map("host_port")
+  internalPort    Int?          @map("internal_port")
+  healthcheckUrl  String?       @map("healthcheck_url")
+  status          ServiceStatus @default(DEPLOYING)
+  metadata        Json?
+  createdAt       DateTime      @default(now()) @map("created_at")
+  updatedAt       DateTime      @updatedAt @map("updated_at")
+  service         Service       @relation("ServiceInstances", fields: [serviceId], references: [id], onDelete: Cascade)
+  deployment      Deployment?   @relation(fields: [deploymentId], references: [id])
+  currentForService Service?    @relation("ServiceCurrentInstance")
 
-  @@map("channels")
+  @@map("instances")
 }
 
-model Testimonial {
-  id         String    @id @default(cuid())
-  content    String
-  fromUser   String    @map("from_user")
-  fromUserId BigInt?   @map("from_user_id")
-  isApproved Boolean   @default(false) @map("is_approved")
-  isPosted   Boolean   @default(false) @map("is_posted")
-  postedAt   DateTime? @map("posted_at")
-  createdAt  DateTime  @default(now()) @map("created_at")
+model Deployment {
+  id             String           @id @default(cuid())
+  serviceId       String           @map("service_id")
+  triggeredById   String?          @map("triggered_by_id")
+  status          DeploymentStatus @default(QUEUED)
+  version         String
+  image           String
+  containerName   String           @map("container_name")
+  envFilePath     String?          @map("env_file_path")
+  configFilePath  String?          @map("config_file_path")
+  metadata        Json?
+  startedAt       DateTime?        @map("started_at")
+  finishedAt      DateTime?        @map("finished_at")
+  createdAt       DateTime         @default(now()) @map("created_at")
+  updatedAt       DateTime         @updatedAt @map("updated_at")
+  service         Service          @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  triggeredBy     User?            @relation("DeploymentTrigger", fields: [triggeredById], references: [id])
+  instance        Instance?
+  logs            DeploymentLog[]
 
-  @@map("testimonials")
+  @@map("deployments")
 }
 
-model Referral {
-  id         String   @id @default(cuid())
-  ownerId    String   @map("owner_id")
-  referredId String   @map("referred_id")
-  bonus      Decimal  @default(0) @db.Decimal(15, 2)
-  isPaid     Boolean  @default(false) @map("is_paid")
-  paidAt     DateTime? @map("paid_at")
-  createdAt  DateTime @default(now()) @map("created_at")
+model DeploymentLog {
+  id           String    @id @default(cuid())
+  deploymentId  String    @map("deployment_id")
+  level        LogLevel
+  step         String
+  message      String
+  context      Json?
+  createdAt    DateTime  @default(now()) @map("created_at")
+  deployment   Deployment @relation(fields: [deploymentId], references: [id], onDelete: Cascade)
 
-  owner    User @relation("ReferralOwner", fields: [ownerId], references: [id])
-  referred User @relation("ReferredUser", fields: [referredId], references: [id])
-
-  @@unique([ownerId, referredId])
-  @@map("referrals")
+  @@map("deployment_logs")
 }
 
-model Voucher {
-  id          String      @id @default(cuid())
-  code        String      @unique
-  type        VoucherType
-  value       Decimal     @db.Decimal(15, 2)
-  minPurchase Decimal     @default(0) @map("min_purchase") @db.Decimal(15, 2)
-  maxDiscount Decimal?    @map("max_discount") @db.Decimal(15, 2)
-  maxUses     Int?        @map("max_uses")
-  usedCount   Int         @default(0) @map("used_count")
-  isActive    Boolean     @default(true) @map("is_active")
-  expiredAt   DateTime?   @map("expired_at")
-  createdAt   DateTime    @default(now()) @map("created_at")
+model SupportTicket {
+  id          String         @id @default(cuid())
+  tenantId     String         @map("tenant_id")
+  userId       String         @map("user_id")
+  serviceId    String?        @map("service_id")
+  subject      String
+  status       TicketStatus   @default(OPEN)
+  priority     TicketPriority @default(MEDIUM)
+  createdAt    DateTime       @default(now()) @map("created_at")
+  updatedAt    DateTime       @updatedAt @map("updated_at")
+  tenant       Tenant         @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  user         User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  service      Service?       @relation(fields: [serviceId], references: [id])
+  messages     SupportMessage[]
 
-  transactions Transaction[]
+  @@map("support_tickets")
+}
 
-  @@map("vouchers")
+model SupportMessage {
+  id         String        @id @default(cuid())
+  ticketId    String        @map("ticket_id")
+  userId      String        @map("user_id")
+  body       String
+  isInternal Boolean       @default(false) @map("is_internal")
+  createdAt  DateTime      @default(now()) @map("created_at")
+  ticket     SupportTicket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  user       User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("support_messages")
+}
+
+model Announcement {
+  id          String                @id @default(cuid())
+  tenantId     String?               @map("tenant_id")
+  createdById  String                @map("created_by_id")
+  title       String
+  body        String
+  audience    AnnouncementAudience   @default(ALL)
+  isPublished Boolean               @default(false) @map("is_published")
+  publishedAt DateTime?             @map("published_at")
+  createdAt   DateTime              @default(now()) @map("created_at")
+  updatedAt   DateTime              @updatedAt @map("updated_at")
+  tenant      Tenant?               @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  createdBy   User                  @relation("AnnouncementAuthor", fields: [createdById], references: [id], onDelete: Cascade)
+
+  @@map("announcements")
+}
+
+model Tutorial {
+  id              String             @id @default(cuid())
+  productId        String             @map("product_id")
+  createdById      String?            @map("created_by_id")
+  title           String
+  slug            String             @unique
+  excerpt         String
+  contentMarkdown String             @map("content_markdown")
+  videoUrl        String?            @map("video_url")
+  visibility      TutorialVisibility @default(CUSTOMER_ONLY)
+  sortOrder       Int                @default(0) @map("sort_order")
+  isPublished     Boolean            @default(true) @map("is_published")
+  createdAt       DateTime           @default(now()) @map("created_at")
+  updatedAt       DateTime           @updatedAt @map("updated_at")
+  product         Product            @relation(fields: [productId], references: [id], onDelete: Cascade)
+  createdBy       User?              @relation("TutorialAuthor", fields: [createdById], references: [id])
+
+  @@map("tutorials")
 }
 
 model ActivityLog {
-  id          String   @id @default(cuid())
-  userId      String?  @map("user_id")
-  telegramId  BigInt?  @map("telegram_id")
+  id          String            @id @default(cuid())
+  tenantId     String?           @map("tenant_id")
+  actorUserId  String?           @map("actor_user_id")
+  actorType   ActivityActorType
   action      String
-  description String
+  subjectType String            @map("subject_type")
+  subjectId   String?           @map("subject_id")
   metadata    Json?
-  createdAt   DateTime @default(now()) @map("created_at")
-
-  user User? @relation(fields: [userId], references: [id])
+  createdAt   DateTime          @default(now()) @map("created_at")
+  tenant      Tenant?           @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  actorUser   User?             @relation("ActorUser", fields: [actorUserId], references: [id])
 
   @@map("activity_logs")
-}
-
-model Broadcast {
-  id          String    @id @default(cuid())
-  message     String
-  imageUrl    String?   @map("image_url")
-  totalSent   Int       @default(0) @map("total_sent")
-  totalFailed Int       @default(0) @map("total_failed")
-  sentBy      BigInt    @map("sent_by")
-  sentAt      DateTime? @map("sent_at")
-  createdAt   DateTime  @default(now()) @map("created_at")
-
-  @@map("broadcasts")
 }

@@ -9,6 +9,7 @@ const { createBot } = require('./bot');
 const { createServer } = require('./api/server');
 const settingsService = require('./services/settings');
 const scheduler = require('./services/scheduler');
+const { prepareRuntime } = require('./utils/bootstrap');
 
 /**
  * ================================================================
@@ -19,23 +20,26 @@ async function main() {
   try {
     // Validasi konfigurasi
     config.validate();
-    logger.info('✅ Config valid');
+    logger.info('Config valid');
+
+    // Pastikan folder runtime tersedia sebelum service lain mengaksesnya
+    prepareRuntime();
 
     // Koneksi database
     await prisma.$connect();
-    logger.info('✅ Database connected');
+    logger.info('Database connected');
 
     // Seed default settings
     await settingsService.seedDefaults();
-    logger.info('✅ Default settings seeded');
+    logger.info('Default settings seeded');
 
     // Buat bot
     const bot = createBot();
-    logger.info('✅ Bot created');
+    logger.info('Bot created');
 
     // Start scheduler
     scheduler.startAll(bot);
-    logger.info('✅ Schedulers started');
+    logger.info('Schedulers started');
 
     // Start server
     const app = createServer(bot);
@@ -52,12 +56,12 @@ async function main() {
         drop_pending_updates: true,
       });
 
-      logger.info(`✅ Webhook set: ${webhookUrl}`);
+      logger.info(`Webhook set: ${webhookUrl}`);
 
       // Start Express server
       const server = app.listen(config.server.port, () => {
-        logger.info(`🚀 Server berjalan di port ${config.server.port} (webhook mode)`);
-        logger.info(`📡 Webhook URL: ${webhookUrl}`);
+        logger.info(`Server berjalan di port ${config.server.port} (webhook mode)`);
+        logger.info(`Webhook URL: ${webhookUrl}`);
       });
 
       // Graceful shutdown
@@ -74,14 +78,14 @@ async function main() {
       process.on('SIGINT', () => shutdown('SIGINT'));
     } else {
       // POLLING MODE (development / no webhook)
-      logger.info('🔄 Starting in polling mode...');
+      logger.info('Starting in polling mode...');
 
       // Hapus webhook jika ada
       await bot.telegram.deleteWebhook({ drop_pending_updates: true });
 
       // Start Express untuk health check & payment callbacks
       app.listen(config.server.port, () => {
-        logger.info(`🚀 Server berjalan di port ${config.server.port} (polling mode)`);
+        logger.info(`Server berjalan di port ${config.server.port} (polling mode)`);
       });
 
       // Start polling
@@ -90,7 +94,7 @@ async function main() {
         allowedUpdates: ['message', 'callback_query', 'chat_member'],
       });
 
-      logger.info('🤖 Bot started (long polling)');
+      logger.info('Bot started (long polling)');
 
       process.on('SIGTERM', () => bot.stop('SIGTERM'));
       process.on('SIGINT', () => bot.stop('SIGINT'));
@@ -98,10 +102,9 @@ async function main() {
 
     // Log bot info
     const botInfo = await bot.telegram.getMe();
-    logger.info(`🤖 Bot: @${botInfo.username} (ID: ${botInfo.id})`);
-
+    logger.info(`Bot: @${botInfo.username} (ID: ${botInfo.id})`);
   } catch (error) {
-    logger.error('❌ Fatal error during startup:', { error: error.message, stack: error.stack });
+    logger.error('Fatal error during startup:', { error: error.message, stack: error.stack });
     process.exit(1);
   }
 }

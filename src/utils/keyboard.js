@@ -148,13 +148,21 @@ function paymentMethodSelect(transactionId, hasBalance, userBalance, amount) {
     ]);
   }
 
-  buttons.push([
-    Markup.button.callback('💳 Paydisini', `pay:paydisini:${transactionId}`),
-  ]);
-
-  buttons.push([
-    Markup.button.callback('💳 Pakasir', `pay:pakasir:${transactionId}`),
-  ]);
+  // Cek gateway apa yang aktif di .env
+  if (process.env.PAYDISINI_API_KEY) {
+    buttons.push([
+      Markup.button.callback('📱 Bayar via QRIS', `paych:paydisini:QRIS:${transactionId}`),
+    ]);
+  } else if (process.env.PAKASIR_API_KEY) {
+    buttons.push([
+      Markup.button.callback('📱 Bayar via QRIS', `paych:pakasir:QRIS:${transactionId}`),
+    ]);
+  } else {
+    // Jika tidak ada gateway yang diatur
+    buttons.push([
+      Markup.button.callback('⚠️ Gateway Belum Diatur', 'noop'),
+    ]);
+  }
 
   buttons.push([
     Markup.button.callback('❌ Batalkan', `pay:cancel:${transactionId}`),
@@ -254,11 +262,18 @@ function profileMenu() {
  * Deposit method selection
  */
 function depositMethodSelect() {
-  return Markup.inlineKeyboard([
-    [Markup.button.callback('💳 Paydisini', 'deposit:paydisini')],
-    [Markup.button.callback('💳 Pakasir', 'deposit:pakasir')],
-    [Markup.button.callback('🏠 Menu Utama', 'menu:main')],
-  ]);
+  const buttons = [];
+
+  if (process.env.PAYDISINI_API_KEY) {
+    buttons.push([Markup.button.callback('📱 Deposit via QRIS', 'deposit:paydisini')]); // Ini nanti bisa diarahkan langsung ke QRIS di deposit.js jika perlu, tapi sementara labelnya saja yang diubah
+  } else if (process.env.PAKASIR_API_KEY) {
+    buttons.push([Markup.button.callback('📱 Deposit via QRIS', 'deposit:pakasir')]);
+  } else {
+    buttons.push([Markup.button.callback('⚠️ Gateway Belum Diatur', 'noop')]);
+  }
+
+  buttons.push([Markup.button.callback('🏠 Menu Utama', 'menu:main')]);
+  return Markup.inlineKeyboard(buttons);
 }
 
 /**
