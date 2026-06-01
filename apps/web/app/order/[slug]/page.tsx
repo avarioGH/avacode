@@ -1,13 +1,14 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, use } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { ArrowLeft, CheckCircle2, Bot, ShieldCheck, Zap, Mail, HelpCircle, AlertCircle, Layers } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
-export default function OrderPage({ params }: { params: { slug: string } }) {
+export default function OrderPage({ params }: { params: Promise<{ slug: string }> }) {
+  const unwrappedParams = use(params);
   // Static dummy data for UI preview purposes
   const productData = {
     title: 'Bot Auto Order Telegram',

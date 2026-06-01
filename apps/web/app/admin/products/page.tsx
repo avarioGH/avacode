@@ -1,18 +1,29 @@
+'use client';
+
+import { useState } from 'react';
 import { Bot, Cloud, Globe, MailCheck, Send, Plus, Edit2, Trash2 } from 'lucide-react';
 import Link from 'next/link';
 
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 
-const products = [
-  { name: 'Bot Auto Order Telegram', icon: Bot, price: 'Rp 149.000', status: 'Published' },
-  { name: 'Bot Forward / Promosi Telegram', icon: Send, price: 'Rp 119.000', status: 'Published' },
-  { name: 'Website Digital Product', icon: Globe, price: 'Rp 249.000', status: 'Published' },
-  { name: 'Website Physical Product', icon: Cloud, price: 'Rp 279.000', status: 'Draft' },
-  { name: 'Website Email OTP', icon: MailCheck, price: 'Rp 219.000', status: 'Published' },
+const initialProducts = [
+  { slug: 'bot-auto-order-telegram', name: 'Bot Auto Order Telegram', icon: Bot, price: 'Rp 149.000', status: 'Published' },
+  { slug: 'bot-promosi-telegram', name: 'Bot Forward / Promosi Telegram', icon: Send, price: 'Rp 119.000', status: 'Published' },
+  { slug: 'website-digital-product', name: 'Website Digital Product', icon: Globe, price: 'Rp 249.000', status: 'Published' },
+  { slug: 'website-physical-product', name: 'Website Physical Product', icon: Cloud, price: 'Rp 279.000', status: 'Draft' },
+  { slug: 'website-email-otp', name: 'Website Email OTP', icon: MailCheck, price: 'Rp 219.000', status: 'Published' },
 ];
 
 export default function AdminProductsPage() {
+  const [products, setProducts] = useState(initialProducts);
+
+  const handleDelete = (slug: string) => {
+    if (confirm('Apakah Anda yakin ingin menghapus produk ini?')) {
+      setProducts(products.filter(p => p.slug !== slug));
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -31,7 +42,7 @@ export default function AdminProductsPage() {
         {products.map((product) => {
           const Icon = product.icon;
           return (
-            <Card key={product.name} className="border border-white/5 bg-white/5 p-6">
+            <Card key={product.slug} className="border border-white/5 bg-white/5 p-6">
               <div className="flex items-start justify-between gap-4">
                 <div className="flex items-start gap-4">
                   <div className="rounded-2xl bg-primary/10 p-3">
@@ -47,10 +58,16 @@ export default function AdminProductsPage() {
                     {product.status}
                   </span>
                   <div className="flex items-center gap-2">
-                    <Button variant="ghost" className="h-8 w-8 p-0 text-foreground-muted hover:text-primary hover:bg-primary/10 rounded-lg">
-                      <Edit2 className="w-4 h-4" />
-                    </Button>
-                    <Button variant="ghost" className="h-8 w-8 p-0 text-foreground-muted hover:text-red-500 hover:bg-red-500/10 rounded-lg">
+                    <Link href={`/admin/products/${product.slug}/edit`}>
+                      <Button variant="ghost" className="h-8 w-8 p-0 text-foreground-muted hover:text-primary hover:bg-primary/10 rounded-lg">
+                        <Edit2 className="w-4 h-4" />
+                      </Button>
+                    </Link>
+                    <Button 
+                      variant="ghost" 
+                      onClick={() => handleDelete(product.slug)}
+                      className="h-8 w-8 p-0 text-foreground-muted hover:text-red-500 hover:bg-red-500/10 rounded-lg"
+                    >
                       <Trash2 className="w-4 h-4" />
                     </Button>
                   </div>
