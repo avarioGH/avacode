@@ -8,10 +8,19 @@ export default function AdminDashboard() {
   ];
 
   const recentTransactions = [
-    { id: 'TRX-9823', client: 'PT. Teknologi Maju', product: 'Dedicated VPS Hosting', amount: 'Rp 499.000', status: 'Lunas', date: 'Hari Ini, 14:20' },
-    { id: 'TRX-9822', client: 'Budi Santoso', product: 'AI Automation Bot', amount: 'Rp 899.000', status: 'Pending', date: 'Hari Ini, 11:05' },
-    { id: 'TRX-9821', client: 'Kreatif Studio', product: 'Custom Web Dev', amount: 'Rp 2.500.000', status: 'Lunas', date: 'Kemarin' },
-    { id: 'TRX-9820', client: 'CV. Abadi Jaya', product: 'Backend API System', amount: 'Rp 1.200.000', status: 'Lunas', date: 'Kemarin' },
+    { id: 'TRX-9823', client: 'PT. Teknologi Maju', product: 'Web Digital/Physical Product', amount: 'Rp 2.500.000', status: 'Lunas', date: 'Hari Ini, 14:20' },
+    { id: 'TRX-9822', client: 'Budi Santoso', product: 'Bot Auto Order Tele', amount: 'Rp 450.000', status: 'Pending', date: 'Hari Ini, 11:05' },
+    { id: 'TRX-9821', client: 'Kreatif Studio', product: 'Bot Tele OTP Email Domain', amount: 'Rp 850.000', status: 'Lunas', date: 'Kemarin' },
+    { id: 'TRX-9820', client: 'CV. Abadi Jaya', product: 'Bot Auto Order WA', amount: 'Rp 650.000', status: 'Lunas', date: 'Kemarin' },
+  ];
+
+  const productsList = [
+    { name: 'Bot Auto Order Tele', sales: '84', revenue: 'Rp 37.800.000', status: 'Aktif' },
+    { name: 'Bot Auto Order WA', sales: '42', revenue: 'Rp 27.300.000', status: 'Aktif' },
+    { name: 'Bot Forward/Promosi Tele', sales: '112', revenue: 'Rp 39.200.000', status: 'Aktif' },
+    { name: 'Web Digital/Physical Product', sales: '18', revenue: 'Rp 45.000.000', status: 'Aktif' },
+    { name: 'Website Email / OTP', sales: '25', revenue: 'Rp 30.000.000', status: 'Aktif' },
+    { name: 'Bot Tele OTP Email Domain', sales: '56', revenue: 'Rp 47.600.000', status: 'Aktif' },
   ];
 
   return (
@@ -71,6 +80,39 @@ export default function AdminDashboard() {
                          </span>
                       </td>
                       <td className="px-6 py-4 text-sm text-foreground-muted">{trx.date}</td>
+                   </tr>
+                 ))}
+              </tbody>
+           </table>
+         </div>
+      </div>
+
+      {/* PRODUCTS CATALOG TABLE */}
+      <div className="glass-panel rounded-2xl border border-white/5 overflow-hidden">
+         <div className="p-6 border-b border-white/5">
+            <h3 className="text-xl font-display font-bold text-white">Katalog Produk Aktif</h3>
+         </div>
+         <div className="overflow-x-auto">
+           <table className="w-full text-left border-collapse">
+              <thead>
+                 <tr className="bg-surface/50 border-b border-white/5">
+                    <th className="px-6 py-4 text-sm font-medium text-foreground-muted">Nama Produk/Layanan</th>
+                    <th className="px-6 py-4 text-sm font-medium text-foreground-muted">Total Penjualan</th>
+                    <th className="px-6 py-4 text-sm font-medium text-foreground-muted">Estimasi Pendapatan</th>
+                    <th className="px-6 py-4 text-sm font-medium text-foreground-muted">Status</th>
+                 </tr>
+              </thead>
+              <tbody className="divide-y divide-white/5">
+                 {productsList.map((prod) => (
+                   <tr key={prod.name} className="hover:bg-white/5 transition-colors">
+                      <td className="px-6 py-4 text-sm text-white font-medium">{prod.name}</td>
+                      <td className="px-6 py-4 text-sm text-foreground-muted">{prod.sales} trx</td>
+                      <td className="px-6 py-4 text-sm text-white font-bold">{prod.revenue}</td>
+                      <td className="px-6 py-4 text-sm">
+                         <span className="px-3 py-1 rounded-full text-xs font-bold bg-success/10 text-success border border-success/20">
+                           {prod.status}
+                         </span>
+                      </td>
                    </tr>
                  ))}
               </tbody>

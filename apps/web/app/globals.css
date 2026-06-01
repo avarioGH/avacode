@@ -2,6 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --font-inter: "Aptos", "Segoe UI", "Trebuchet MS", sans-serif;
+  --font-space-grotesk: "Bahnschrift", "Aptos", "Segoe UI", sans-serif;
+}
+
 * {
   box-sizing: border-box;
 }

@@ -53,7 +53,7 @@ export default async function ServiceDetailPage({
               </Button>
             </Link>
             <a href={product.demoUrl}>
-              <Button variant="outline" className="border-white/20 bg-white/5 backdrop-blur-md text-white hover:bg-white/10 rounded-full px-8 h-12 transition-all">
+              <Button variant="secondary" className="border-white/20 bg-white/5 backdrop-blur-md text-white hover:bg-white/10 rounded-full px-8 h-12 transition-all">
                 <CirclePlay className="mr-2 h-5 w-5" />
                 Lihat Demo
               </Button>

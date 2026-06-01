@@ -2,24 +2,66 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowRight, Terminal, Server, Database, Cloud, Zap, CheckCircle2, Bot, Shield, Layers, Code, HardDrive, Smartphone, Globe } from 'lucide-react';
+import { motion, AnimatePresence, type Variants } from 'framer-motion';
+import {
+  ArrowRight,
+  Terminal,
+  Server,
+  Database,
+  Cloud,
+  Zap,
+  CheckCircle2,
+  Bot,
+  Shield,
+  Layers,
+  Code,
+  HardDrive,
+  Smartphone,
+  Globe,
+  Menu,
+  X,
+  Mail,
+  MapPin,
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
+
+interface Product {
+  title: string;
+  slug: string;
+  icon: any;
+  desc: string;
+  price: string;
+  glow: string;
+}
 
 export default function HomePage() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
-  const fadeInUp = {
+  const products: Product[] = [
+    { title: 'Bot Auto Order Tele', slug: 'bot-auto-order-tele', icon: Bot, desc: 'Sistem otomatisasi penuh untuk melayani dan merekap pesanan pelanggan via Telegram 24/7.', price: 'Rp 450.000', glow: 'shadow-[0_0_30px_rgba(22,119,255,0.15)]' },
+    { title: 'Bot Auto Order WA', slug: 'bot-auto-order-wa', icon: Smartphone, desc: 'Otomatisasi pemesanan cerdas di WhatsApp dengan integrasi AI dan sistem pembayaran.', price: 'Rp 650.000', glow: 'shadow-[0_0_30px_rgba(16,185,129,0.15)]' },
+    { title: 'Bot Forward/Promosi Tele', slug: 'bot-promosi-tele', icon: Terminal, desc: 'Bot spesialisasi untuk mem-forward pesan massal dan kampanye promosi otomatis di Telegram.', price: 'Rp 350.000', glow: 'shadow-[0_0_30px_rgba(168,85,247,0.15)]' },
+    { title: 'Web Digital/Physical Product', slug: 'web-digital-product', icon: Globe, desc: 'Toko online premium dengan fitur keranjang belanja lengkap untuk produk digital maupun fisik.', price: 'Rp 2.500.000', glow: 'shadow-[0_0_30px_rgba(34,211,238,0.15)]' },
+    { title: 'Website Email / OTP', slug: 'website-email-otp', icon: Mail, desc: 'Platform penerimaan email dan sistem verifikasi OTP (One-Time Password) yang aman & andal.', price: 'Rp 1.200.000', glow: 'shadow-[0_0_30px_rgba(22,119,255,0.15)]' },
+    { title: 'Bot Tele OTP Email Domain', slug: 'bot-otp-domain', icon: Shield, desc: 'Bot Telegram untuk memfasilitasi pembuatan email domain khusus dan verifikasi OTP.', price: 'Rp 850.000', glow: 'shadow-[0_0_30px_rgba(168,85,247,0.15)]' },
+  ];
+
+  const fadeInUp: Variants = {
     hidden: { opacity: 0, y: 40 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } }
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] as const },
+    },
   };
 
-  const staggerContainer = {
+  const staggerContainer: Variants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
-      transition: { staggerChildren: 0.1 }
-    }
+      transition: { staggerChildren: 0.1 },
+    },
   };
 
   return (
@@ -127,7 +169,7 @@ export default function HomePage() {
                   </Button>
                 </Link>
                 <Link href="/register" className="w-full sm:w-auto">
-                  <Button variant="outline" className="w-full sm:w-auto h-14 px-8 text-base rounded-full border-white/15 bg-white/5 hover:bg-white/10 font-bold backdrop-blur-md text-white transition-all duration-300">
+                  <Button variant="secondary" className="w-full sm:w-auto h-14 px-8 text-base rounded-full border-white/15 bg-white/5 hover:bg-white/10 font-bold backdrop-blur-md text-white transition-all duration-300">
                     Daftar Klien Baru
                   </Button>
                 </Link>
@@ -212,18 +254,12 @@ export default function HomePage() {
           </motion.div>
           
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-8">
-            {[
-              { title: 'Dedicated VPS Hosting', icon: Server, desc: 'Server super cepat dengan sumber daya terdedikasi untuk aplikasi skala besar.', price: 'Rp 499.000', glow: 'shadow-[0_0_30px_rgba(22,119,255,0.15)]' },
-              { title: 'Custom Web Dev', icon: Code, desc: 'Pembuatan website dan aplikasi web yang disesuaikan persis dengan alur bisnis Anda.', price: 'Rp 2.500.000', glow: 'shadow-[0_0_30px_rgba(168,85,247,0.15)]' },
-              { title: 'AI Automation Bot', icon: Bot, desc: 'Bot cerdas untuk mengotomatiskan balasan pelanggan dan tugas repetitif harian.', price: 'Rp 899.000', glow: 'shadow-[0_0_30px_rgba(34,211,238,0.15)]' },
-              { title: 'Backend API System', icon: Terminal, desc: 'Pengembangan API tangguh untuk menghubungkan berbagai platform digital Anda.', price: 'Rp 1.200.000', glow: 'shadow-[0_0_30px_rgba(16,185,129,0.15)]' },
-              { title: 'Database Management', icon: Database, desc: 'Pengelolaan dan optimasi database dengan backup harian & keamanan tingkat tinggi.', price: 'Rp 650.000', glow: 'shadow-[0_0_30px_rgba(22,119,255,0.15)]' },
-              { title: 'SaaS Infrastructure', icon: Cloud, desc: 'Infrastruktur cloud lengkap untuk menjalankan software-as-a-service (SaaS) Anda.', price: 'Rp 1.500.000', glow: 'shadow-[0_0_30px_rgba(168,85,247,0.15)]' },
-            ].map((product, idx) => (
+            {products.map((product, idx) => (
               <motion.div 
                 key={product.title} 
                 initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: idx * 0.1 }}
-                className={`glass-panel rounded-2xl md:rounded-[2rem] p-5 md:p-8 border border-white/10 relative overflow-hidden group hover:border-white/20 transition-all duration-500 hover:-translate-y-2 flex flex-col h-full ${product.glow}`}
+                onClick={() => setSelectedProduct(product)}
+                className={`cursor-pointer glass-panel rounded-2xl md:rounded-[2rem] p-5 md:p-8 border border-white/10 relative overflow-hidden group hover:border-white/20 transition-all duration-500 hover:-translate-y-2 flex flex-col h-full ${product.glow}`}
               >
                 <div className="absolute -inset-4 bg-gradient-to-br from-primary/10 to-purple/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-2xl" />
                 <div className="relative z-10 flex-1 flex flex-col">
@@ -406,6 +442,55 @@ export default function HomePage() {
           </div>
         </div>
       </footer>
+      {/* PRODUCT MODAL */}
+      <AnimatePresence>
+        {selectedProduct && (
+          <motion.div 
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 md:p-6"
+            onClick={() => setSelectedProduct(null)}
+          >
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              className="bg-surface border border-white/10 rounded-3xl shadow-glow w-full max-w-lg overflow-hidden flex flex-col relative"
+              onClick={e => e.stopPropagation()}
+            >
+              <div className="absolute top-0 inset-x-0 h-32 bg-primary/10 blur-3xl -z-10" />
+              <div className="p-6 md:p-8 relative">
+                <button onClick={() => setSelectedProduct(null)} className="absolute top-6 right-6 text-white/50 hover:text-white transition-colors bg-white/5 rounded-full p-2">
+                  <X className="w-5 h-5" />
+                </button>
+                <div className="w-16 h-16 rounded-2xl bg-surface border border-white/10 flex items-center justify-center mb-6 shadow-glow">
+                  <selectedProduct.icon className="w-8 h-8 text-primary" />
+                </div>
+                <h3 className="text-2xl md:text-3xl font-display font-bold text-white mb-2">{selectedProduct.title}</h3>
+                <p className="text-foreground-muted mb-6 leading-relaxed">{selectedProduct.desc}</p>
+                
+                <div className="bg-white/5 border border-white/5 rounded-2xl p-5 mb-8">
+                  <span className="text-sm text-foreground-muted block mb-1 uppercase tracking-wider">Harga Berlangganan</span>
+                  <span className="text-3xl font-display font-bold text-primary">{selectedProduct.price} <span className="text-sm text-foreground-muted font-normal">/ bulan</span></span>
+                  <ul className="mt-4 space-y-2 border-t border-white/5 pt-4">
+                    <li className="flex items-center gap-2 text-sm text-white/80"><CheckCircle2 className="w-4 h-4 text-success" /> Konsultasi Gratis</li>
+                    <li className="flex items-center gap-2 text-sm text-white/80"><CheckCircle2 className="w-4 h-4 text-success" /> Setup Langsung</li>
+                    <li className="flex items-center gap-2 text-sm text-white/80"><CheckCircle2 className="w-4 h-4 text-success" /> Dukungan 24/7</li>
+                  </ul>
+                </div>
+                
+                <div className="flex gap-4 mt-2">
+                  <Link href={`/order/${selectedProduct.slug}`} className="w-full">
+                    <Button className="w-full h-14 bg-primary-gradient text-white font-bold text-lg rounded-xl shadow-glow hover:scale-[1.02] transition-transform">
+                      Lanjutkan Pemesanan
+                    </Button>
+                  </Link>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
     </main>
   );
 }
