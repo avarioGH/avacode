@@ -6,7 +6,6 @@ import { useRouter } from 'next/navigation';
 import { ArrowLeft, Bot, Rocket, Shield, Key, AlertCircle, Save } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 export default function SetupServicePage({ params }: { params: Promise<{ id: string }> }) {
   const unwrappedParams = use(params);
@@ -147,15 +146,19 @@ export default function SetupServicePage({ params }: { params: Promise<{ id: str
               <div className="space-y-5">
                 <div>
                   <label className="block text-sm font-bold text-foreground-muted uppercase tracking-wider mb-2">Pilih Gateway</label>
-                  <Select value={gateway} onValueChange={setGateway}>
-                    <SelectTrigger className="w-full bg-surface/80 border-white/10 text-white h-12">
-                      <SelectValue placeholder="Pilih Gateway Pembayaran" />
-                    </SelectTrigger>
-                    <SelectContent className="bg-surface border-white/10 text-white">
-                      <SelectItem value="paydisini">Paydisini (Rekomendasi)</SelectItem>
-                      <SelectItem value="pakasir">Pakasir</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <div className="relative">
+                    <select 
+                      value={gateway} 
+                      onChange={(e) => setGateway(e.target.value)}
+                      className="w-full bg-surface/80 border border-white/10 text-white h-12 px-4 rounded-xl appearance-none focus:outline-none focus:ring-2 focus:ring-primary/50"
+                    >
+                      <option value="paydisini" className="bg-surface text-white">Paydisini (Rekomendasi)</option>
+                      <option value="pakasir" className="bg-surface text-white">Pakasir</option>
+                    </select>
+                    <div className="absolute inset-y-0 right-4 flex items-center pointer-events-none text-foreground-muted">
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </div>
+                  </div>
                 </div>
 
                 {gateway === 'paydisini' && (
