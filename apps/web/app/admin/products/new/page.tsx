@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 
 export default function NewProductPage() {
+  const [isComingSoon, setIsComingSoon] = useState(false);
   const [features, setFeatures] = useState<string[]>(['']);
   const [variants, setVariants] = useState([{ name: '1 Bulan', price: '' }]);
   const [faqs, setFaqs] = useState([{ question: '', answer: '' }]);
@@ -78,6 +79,18 @@ export default function NewProductPage() {
                <div>
                  <label className="block text-sm font-medium text-foreground-muted mb-2">URL Gambar / Ikon Produk</label>
                  <Input placeholder="https://... atau /logo.png" className="bg-surface/50 border-white/10 text-white" />
+               </div>
+               <div className="flex items-center gap-3 pt-2">
+                 <input 
+                   type="checkbox" 
+                   id="coming-soon"
+                   checked={isComingSoon}
+                   onChange={(e) => setIsComingSoon(e.target.checked)}
+                   className="w-5 h-5 rounded border-white/20 bg-surface/50 text-primary focus:ring-primary focus:ring-offset-background"
+                 />
+                 <label htmlFor="coming-soon" className="text-sm font-bold text-white cursor-pointer select-none">
+                   Tandai sebagai "Coming Soon" <span className="text-foreground-muted font-normal block text-xs">Produk akan tampil namun pelanggan belum bisa memesannya.</span>
+                 </label>
                </div>
             </div>
           </div>

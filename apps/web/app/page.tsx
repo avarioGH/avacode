@@ -32,6 +32,7 @@ interface Product {
   desc: string;
   price: string;
   glow: string;
+  isComingSoon?: boolean;
 }
 
 export default function HomePage() {
@@ -44,7 +45,7 @@ export default function HomePage() {
     { title: 'Bot Forward/Promosi Tele', slug: 'bot-promosi-tele', icon: Terminal, desc: 'Bot spesialisasi untuk mem-forward pesan massal dan kampanye promosi otomatis di Telegram.', price: 'Rp 350.000', glow: 'shadow-[0_0_30px_rgba(168,85,247,0.15)]' },
     { title: 'Web Digital/Physical Product', slug: 'web-digital-product', icon: Globe, desc: 'Toko online premium dengan fitur keranjang belanja lengkap untuk produk digital maupun fisik.', price: 'Rp 2.500.000', glow: 'shadow-[0_0_30px_rgba(34,211,238,0.15)]' },
     { title: 'Website Email / OTP', slug: 'website-email-otp', icon: Mail, desc: 'Platform penerimaan email dan sistem verifikasi OTP (One-Time Password) yang aman & andal.', price: 'Rp 1.200.000', glow: 'shadow-[0_0_30px_rgba(22,119,255,0.15)]' },
-    { title: 'Bot Tele OTP Email Domain', slug: 'bot-otp-domain', icon: Shield, desc: 'Bot Telegram untuk memfasilitasi pembuatan email domain khusus dan verifikasi OTP.', price: 'Rp 850.000', glow: 'shadow-[0_0_30px_rgba(168,85,247,0.15)]' },
+    { title: 'Bot Tele OTP Email Domain', slug: 'bot-otp-domain', icon: Shield, desc: 'Bot Telegram untuk memfasilitasi pembuatan email domain khusus dan verifikasi OTP.', price: 'Rp 850.000', glow: 'shadow-[0_0_30px_rgba(168,85,247,0.15)]', isComingSoon: true },
   ];
 
   const fadeInUp: Variants = {
@@ -263,8 +264,13 @@ export default function HomePage() {
               >
                 <div className="absolute -inset-4 bg-gradient-to-br from-primary/10 to-purple/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-2xl" />
                 <div className="relative z-10 flex-1 flex flex-col">
-                  <div className="w-12 h-12 md:w-14 md:h-14 rounded-xl md:rounded-2xl bg-surface border border-white/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500">
+                  <div className="w-12 h-12 md:w-14 md:h-14 rounded-xl md:rounded-2xl bg-surface border border-white/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500 relative">
                     <product.icon className="w-6 h-6 md:w-7 md:h-7 text-white group-hover:text-primary transition-colors" />
+                    {product.isComingSoon && (
+                      <span className="absolute -top-2 -right-2 bg-orange-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full whitespace-nowrap shadow-[0_0_10px_rgba(249,115,22,0.5)]">
+                        COMING SOON
+                      </span>
+                    )}
                   </div>
                   <h3 className="text-xl md:text-2xl font-display font-bold text-white mb-3 leading-tight">{product.title}</h3>
                   <p className="text-sm md:text-base text-foreground-muted leading-relaxed flex-1">{product.desc}</p>
@@ -462,8 +468,13 @@ export default function HomePage() {
                 <button onClick={() => setSelectedProduct(null)} className="absolute top-6 right-6 text-white/50 hover:text-white transition-colors bg-white/5 rounded-full p-2">
                   <X className="w-5 h-5" />
                 </button>
-                <div className="w-16 h-16 rounded-2xl bg-surface border border-white/10 flex items-center justify-center mb-6 shadow-glow">
+                <div className="w-16 h-16 rounded-2xl bg-surface border border-white/10 flex items-center justify-center mb-6 shadow-glow relative">
                   <selectedProduct.icon className="w-8 h-8 text-primary" />
+                  {selectedProduct.isComingSoon && (
+                    <span className="absolute -top-3 -right-3 bg-orange-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-[0_0_10px_rgba(249,115,22,0.5)]">
+                      COMING SOON
+                    </span>
+                  )}
                 </div>
                 <h3 className="text-2xl md:text-3xl font-display font-bold text-white mb-2">{selectedProduct.title}</h3>
                 <p className="text-foreground-muted mb-6 leading-relaxed">{selectedProduct.desc}</p>
@@ -479,11 +490,17 @@ export default function HomePage() {
                 </div>
                 
                 <div className="flex gap-4 mt-2">
-                  <Link href={`/order/${selectedProduct.slug}`} className="w-full">
-                    <Button className="w-full h-14 bg-primary-gradient text-white font-bold text-lg rounded-xl shadow-glow hover:scale-[1.02] transition-transform">
-                      Lanjutkan Pemesanan
+                  {selectedProduct.isComingSoon ? (
+                    <Button disabled className="w-full h-14 bg-surface border border-white/10 text-foreground-muted font-bold text-lg rounded-xl cursor-not-allowed">
+                      Segera Hadir
                     </Button>
-                  </Link>
+                  ) : (
+                    <Link href={`/order/${selectedProduct.slug}`} className="w-full">
+                      <Button className="w-full h-14 bg-primary-gradient text-white font-bold text-lg rounded-xl shadow-glow hover:scale-[1.02] transition-transform">
+                        Lanjutkan Pemesanan
+                      </Button>
+                    </Link>
+                  )}
                 </div>
               </div>
             </motion.div>

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Bot, Cloud, Globe, MailCheck, Send, Plus, Edit2, Trash2 } from 'lucide-react';
+import { Bot, Cloud, Globe, MailCheck, Send, Plus, Edit2, Trash2, Shield } from 'lucide-react';
 import Link from 'next/link';
 
 import { Card } from '@/components/ui/card';
@@ -13,6 +13,7 @@ const initialProducts = [
   { slug: 'website-digital-product', name: 'Website Digital Product', icon: Globe, price: 'Rp 249.000', status: 'Published' },
   { slug: 'website-physical-product', name: 'Website Physical Product', icon: Cloud, price: 'Rp 279.000', status: 'Draft' },
   { slug: 'website-email-otp', name: 'Website Email OTP', icon: MailCheck, price: 'Rp 219.000', status: 'Published' },
+  { slug: 'bot-otp-domain', name: 'Bot Tele OTP Email Domain', icon: Shield, price: 'Rp 850.000', status: 'Published', isComingSoon: true },
 ];
 
 export default function AdminProductsPage() {
@@ -54,9 +55,15 @@ export default function AdminProductsPage() {
                   </div>
                 </div>
                 <div className="flex flex-col items-end gap-3">
-                  <span className="rounded-full border border-white/10 px-3 py-1 text-xs font-bold uppercase tracking-[0.16em] text-white/80">
-                    {product.status}
-                  </span>
+                  {product.isComingSoon ? (
+                    <span className="rounded-full border border-orange-500/30 bg-orange-500/10 px-3 py-1 text-xs font-bold uppercase tracking-[0.16em] text-orange-500">
+                      COMING SOON
+                    </span>
+                  ) : (
+                    <span className="rounded-full border border-white/10 px-3 py-1 text-xs font-bold uppercase tracking-[0.16em] text-white/80">
+                      {product.status}
+                    </span>
+                  )}
                   <div className="flex items-center gap-2">
                     <Link href={`/admin/products/${product.slug}/edit`}>
                       <Button variant="ghost" className="h-8 w-8 p-0 text-foreground-muted hover:text-primary hover:bg-primary/10 rounded-lg">

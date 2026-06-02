@@ -15,6 +15,7 @@ export default function EditProductPage({ params }: { params: Promise<{ slug: st
     unwrappedParams.slug.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())
   );
   const [imageUrl, setImageUrl] = useState('');
+  const [isComingSoon, setIsComingSoon] = useState(false);
   
   const [features, setFeatures] = useState<string[]>([
     'Membalas chat otomatis dalam 0.1 detik',
@@ -112,6 +113,18 @@ export default function EditProductPage({ params }: { params: Promise<{ slug: st
                <div>
                  <label className="block text-sm font-medium text-foreground-muted mb-2">Deskripsi Produk</label>
                  <Textarea placeholder="Tuliskan penjelasan produk di sini..." className="bg-surface/50 border-white/10 text-white min-h-[120px]" />
+               </div>
+               <div className="flex items-center gap-3 pt-2">
+                 <input 
+                   type="checkbox" 
+                   id="coming-soon"
+                   checked={isComingSoon}
+                   onChange={(e) => setIsComingSoon(e.target.checked)}
+                   className="w-5 h-5 rounded border-white/20 bg-surface/50 text-primary focus:ring-primary focus:ring-offset-background"
+                 />
+                 <label htmlFor="coming-soon" className="text-sm font-bold text-white cursor-pointer select-none">
+                   Tandai sebagai "Coming Soon" <span className="text-foreground-muted font-normal block text-xs">Produk akan tampil namun pelanggan belum bisa memesannya.</span>
+                 </label>
                </div>
             </div>
           </div>

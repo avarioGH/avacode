@@ -2,6 +2,7 @@
 
 import { useState, use } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { ArrowLeft, CheckCircle2, Bot, ShieldCheck, Zap, Mail, HelpCircle, AlertCircle, Layers } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -9,6 +10,20 @@ import { Input } from '@/components/ui/input';
 
 export default function OrderPage({ params }: { params: Promise<{ slug: string }> }) {
   const unwrappedParams = use(params);
+  const router = useRouter();
+  const [isProcessing, setIsProcessing] = useState(false);
+
+  const handleCheckout = () => {
+    setIsProcessing(true);
+    // Simulasi proses payment & order creation selama 2 detik
+    setTimeout(() => {
+      // Generate mock ID
+      const mockServiceId = `srv-${Date.now().toString().slice(-6)}`;
+      // Redirect ke dashboard setup layanan
+      router.push(`/dashboard/services/${mockServiceId}?product=${unwrappedParams.slug}`);
+    }, 2000);
+  };
+  
   // Static dummy data for UI preview purposes
   const productData = {
     title: 'Bot Auto Order Telegram',
@@ -202,8 +217,12 @@ export default function OrderPage({ params }: { params: Promise<{ slug: string }
 
                  {/* Submit Button */}
                  <div className="pt-8">
-                   <Button className="w-full h-16 rounded-2xl bg-primary-gradient border-0 text-white font-bold text-lg shadow-glow hover:scale-[1.02] transition-transform">
-                     Selesaikan Pesanan & Buat Bot
+                   <Button 
+                     onClick={handleCheckout} 
+                     disabled={isProcessing}
+                     className="w-full h-16 rounded-2xl bg-primary-gradient border-0 text-white font-bold text-lg shadow-glow hover:scale-[1.02] transition-transform"
+                   >
+                     {isProcessing ? 'Memproses Pesanan...' : 'Selesaikan Pesanan & Buat Bot'}
                    </Button>
                    <p className="text-center text-xs text-foreground-muted mt-4">
                      Pesanan akan diproses seketika (*instant deployment*) setelah pembayaran berhasil.
