@@ -3,6 +3,7 @@
 import { useState, use } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { motion } from 'framer-motion';
 import { ArrowLeft, Bot, Rocket, Shield, Key, AlertCircle, Save } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -72,7 +73,7 @@ export default function SetupServicePage({ params }: { params: Promise<{ id: str
       {/* Header */}
       <div className="flex items-center gap-4 border-b border-white/5 pb-6">
         <Link href="/dashboard/services">
-          <Button variant="outline" className="w-10 h-10 p-0 rounded-xl border-white/10 bg-surface text-white hover:bg-white/5">
+          <Button variant="secondary" className="w-10 h-10 p-0 rounded-xl border-white/10 bg-surface text-white hover:bg-white/5">
             <ArrowLeft className="w-5 h-5" />
           </Button>
         </Link>

@@ -10,7 +10,7 @@ import { Textarea } from '@/components/ui/textarea';
 export default function NewProductPage() {
   const [isComingSoon, setIsComingSoon] = useState(false);
   const [features, setFeatures] = useState<string[]>(['']);
-  const [variants, setVariants] = useState([{ name: '1 Bulan', price: '' }]);
+  const [variants, setVariants] = useState([{ name: '1 Bulan', price: '', duration: '30' }]);
   const [faqs, setFaqs] = useState([{ question: '', answer: '' }]);
 
   const addFeature = () => setFeatures([...features, '']);
@@ -21,8 +21,8 @@ export default function NewProductPage() {
   };
   const removeFeature = (index: number) => setFeatures(features.filter((_, i) => i !== index));
 
-  const addVariant = () => setVariants([...variants, { name: '', price: '' }]);
-  const updateVariant = (index: number, field: 'name'|'price', value: string) => {
+  const addVariant = () => setVariants([...variants, { name: '', price: '', duration: '' }]);
+  const updateVariant = (index: number, field: 'name'|'price'|'duration', value: string) => {
     const newVariants = [...variants];
     newVariants[index][field] = value;
     setVariants(newVariants);
@@ -42,7 +42,7 @@ export default function NewProductPage() {
       <div className="flex items-center justify-between mb-8">
          <div className="flex items-center gap-4">
            <Link href="/admin">
-             <Button variant="outline" className="w-10 h-10 p-0 rounded-xl border-white/10 bg-surface text-white">
+             <Button variant="secondary" className="w-10 h-10 p-0 rounded-xl border-white/10 bg-surface text-white">
                <ArrowLeft className="w-5 h-5" />
              </Button>
            </Link>
@@ -99,25 +99,32 @@ export default function NewProductPage() {
             <h3 className="text-lg font-bold text-white border-b border-white/5 pb-3">Variasi Langganan</h3>
             <div className="space-y-4">
                {variants.map((variant, idx) => (
-                 <div key={idx} className="flex items-center gap-3 bg-surface/30 p-3 rounded-xl border border-white/5">
+                 <div key={idx} className="flex flex-col sm:flex-row items-center gap-3 bg-surface/30 p-3 rounded-xl border border-white/5">
                    <Input 
-                     placeholder="Masa Aktif (cth: 1 Bulan)" 
+                     placeholder="Nama Paket (cth: 1 Bulan)" 
                      value={variant.name} 
                      onChange={(e) => updateVariant(idx, 'name', e.target.value)} 
-                     className="bg-surface border-white/10 text-white w-1/2" 
+                     className="bg-surface border-white/10 text-white w-full sm:w-1/3" 
+                   />
+                   <Input 
+                     placeholder="Durasi Hari (cth: 30)" 
+                     type="number"
+                     value={variant.duration} 
+                     onChange={(e) => updateVariant(idx, 'duration', e.target.value)} 
+                     className="bg-surface border-white/10 text-white w-full sm:w-1/3" 
                    />
                    <Input 
                      placeholder="Harga (cth: Rp 450.000)" 
                      value={variant.price} 
                      onChange={(e) => updateVariant(idx, 'price', e.target.value)} 
-                     className="bg-surface border-white/10 text-white w-1/2" 
+                     className="bg-surface border-white/10 text-white w-full sm:w-1/3" 
                    />
-                   <Button variant="ghost" onClick={() => removeVariant(idx)} className="text-red-500 hover:bg-red-500/10 px-3">
+                   <Button variant="ghost" onClick={() => removeVariant(idx)} className="text-red-500 hover:bg-red-500/10 px-3 shrink-0">
                      <Trash2 className="w-4 h-4" />
                    </Button>
                  </div>
                ))}
-               <Button variant="outline" onClick={addVariant} className="w-full border-dashed border-white/20 text-foreground-muted hover:text-white">
+               <Button variant="secondary" onClick={addVariant} className="w-full border-dashed border-white/20 text-foreground-muted hover:text-white">
                  <Plus className="w-4 h-4 mr-2" /> Tambah Variasi Harga
                </Button>
             </div>
@@ -145,7 +152,7 @@ export default function NewProductPage() {
                    />
                  </div>
                ))}
-               <Button variant="outline" onClick={addFaq} className="w-full border-dashed border-white/20 text-foreground-muted hover:text-white">
+               <Button variant="secondary" onClick={addFaq} className="w-full border-dashed border-white/20 text-foreground-muted hover:text-white">
                  <Plus className="w-4 h-4 mr-2" /> Tambah QnA Baru
                </Button>
             </div>
@@ -171,7 +178,7 @@ export default function NewProductPage() {
                     </Button>
                   </div>
                 ))}
-                <Button variant="outline" onClick={addFeature} className="w-full border-dashed border-white/20 text-foreground-muted hover:text-white text-sm">
+                <Button variant="secondary" onClick={addFeature} className="w-full border-dashed border-white/20 text-foreground-muted hover:text-white text-sm">
                   <Plus className="w-4 h-4 mr-2" /> Tambah Poin
                 </Button>
              </div>

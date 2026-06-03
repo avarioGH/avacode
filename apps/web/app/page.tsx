@@ -255,33 +255,36 @@ export default function HomePage() {
           </motion.div>
           
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-8">
-            {products.map((product, idx) => (
-              <motion.div 
-                key={product.title} 
-                initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: idx * 0.1 }}
-                onClick={() => setSelectedProduct(product)}
-                className={`cursor-pointer glass-panel rounded-2xl md:rounded-[2rem] p-5 md:p-8 border border-white/10 relative overflow-hidden group hover:border-white/20 transition-all duration-500 hover:-translate-y-2 flex flex-col h-full ${product.glow}`}
-              >
-                <div className="absolute -inset-4 bg-gradient-to-br from-primary/10 to-purple/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-2xl" />
-                <div className="relative z-10 flex-1 flex flex-col">
-                  <div className="w-12 h-12 md:w-14 md:h-14 rounded-xl md:rounded-2xl bg-surface border border-white/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500 relative">
-                    <product.icon className="w-6 h-6 md:w-7 md:h-7 text-white group-hover:text-primary transition-colors" />
-                    {product.isComingSoon && (
-                      <span className="absolute -top-2 -right-2 bg-orange-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full whitespace-nowrap shadow-[0_0_10px_rgba(249,115,22,0.5)]">
-                        COMING SOON
-                      </span>
-                    )}
+            {products.map((product, idx) => {
+              const Icon = product.icon;
+              return (
+                <motion.div 
+                  key={product.title} 
+                  initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: idx * 0.1 }}
+                  onClick={() => setSelectedProduct(product)}
+                  className={`cursor-pointer glass-panel rounded-2xl md:rounded-[2rem] p-5 md:p-8 border border-white/10 relative overflow-hidden group hover:border-white/20 transition-all duration-500 hover:-translate-y-2 flex flex-col h-full ${product.glow}`}
+                >
+                  <div className="absolute -inset-4 bg-gradient-to-br from-primary/10 to-purple/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-2xl" />
+                  <div className="relative z-10 flex-1 flex flex-col">
+                    <div className="w-12 h-12 md:w-14 md:h-14 rounded-xl md:rounded-2xl bg-surface border border-white/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500 relative">
+                      <Icon className="w-6 h-6 md:w-7 md:h-7 text-white group-hover:text-primary transition-colors" />
+                      {product.isComingSoon === true && (
+                        <span className="absolute -top-2 -right-2 bg-orange-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full whitespace-nowrap shadow-[0_0_10px_rgba(249,115,22,0.5)]">
+                          COMING SOON
+                        </span>
+                      )}
+                    </div>
+                    <h3 className="text-xl md:text-2xl font-display font-bold text-white mb-3 leading-tight">{product.title}</h3>
+                    <p className="text-sm md:text-base text-foreground-muted leading-relaxed flex-1">{product.desc}</p>
+                    
+                    <div className="mt-6 pt-6 border-t border-white/10 flex flex-col">
+                      <span className="text-xs text-foreground-muted mb-1 uppercase tracking-wider">Mulai dari</span>
+                      <span className="text-lg md:text-2xl font-display font-bold text-primary">{product.price} <span className="text-sm text-foreground-muted font-normal">/ bln</span></span>
+                    </div>
                   </div>
-                  <h3 className="text-xl md:text-2xl font-display font-bold text-white mb-3 leading-tight">{product.title}</h3>
-                  <p className="text-sm md:text-base text-foreground-muted leading-relaxed flex-1">{product.desc}</p>
-                  
-                  <div className="mt-6 pt-6 border-t border-white/10 flex flex-col">
-                    <span className="text-xs text-foreground-muted mb-1 uppercase tracking-wider">Mulai dari</span>
-                    <span className="text-lg md:text-2xl font-display font-bold text-primary">{product.price} <span className="text-sm text-foreground-muted font-normal">/ bln</span></span>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
+                </motion.div>
+              );
+            })}
           </div>
         </section>
 
@@ -469,15 +472,18 @@ export default function HomePage() {
                   <X className="w-5 h-5" />
                 </button>
                 <div className="w-16 h-16 rounded-2xl bg-surface border border-white/10 flex items-center justify-center mb-6 shadow-glow relative">
-                  <selectedProduct.icon className="w-8 h-8 text-primary" />
-                  {selectedProduct.isComingSoon && (
+                  {selectedProduct && (() => {
+                    const ModalIcon = selectedProduct.icon;
+                    return <ModalIcon className="w-8 h-8 text-primary" />;
+                  })()}
+                  {selectedProduct?.isComingSoon === true && (
                     <span className="absolute -top-3 -right-3 bg-orange-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-[0_0_10px_rgba(249,115,22,0.5)]">
                       COMING SOON
                     </span>
                   )}
                 </div>
-                <h3 className="text-2xl md:text-3xl font-display font-bold text-white mb-2">{selectedProduct.title}</h3>
-                <p className="text-foreground-muted mb-6 leading-relaxed">{selectedProduct.desc}</p>
+                <h3 className="text-2xl md:text-3xl font-display font-bold text-white mb-2">{selectedProduct?.title}</h3>
+                <p className="text-foreground-muted mb-6 leading-relaxed">{selectedProduct?.desc}</p>
                 
                 <div className="bg-white/5 border border-white/5 rounded-2xl p-5 mb-8">
                   <span className="text-sm text-foreground-muted block mb-1 uppercase tracking-wider">Harga Berlangganan</span>
